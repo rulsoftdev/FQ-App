@@ -1,0 +1,189 @@
+<div class="dashboard-layout">
+  @if (cargando()) {
+    <div class="loader">
+      <p>Iniciando FetenQuest... Cargando pergaminos desde la biblioteca...</p>
+      <!-- Aquí podrías poner un spinner chulo -->
+    </div>
+  } @else {
+    @if (this.mision(); as mision) {
+      <!-- CABECERA: Pergamino de Información de Partida -->
+      <header class="game-info">
+        <h1>{{ this.mision()!.nombre }}</h1>
+        
+        <div class="danger-control">
+          <button (click)="cambiarPeligro(-1)" class="danger-btn">-</button>
+          
+          <div class="danger-display">
+            <span class="danger-label">NIVEL DE PELIGRO:</span>
+            <span class="danger-value">{{ partida().nivelPeligroActual }}</span>
+          </div>
+          
+          <button (click)="cambiarPeligro(1)" class="danger-btn">+</button>
+        </div>
+      </header>
+
+      <!-- ÁREA CENTRAL: El Visualizador de Cartas -->
+      <main class="card-viewer">
+        @if (cartaActiva()) {
+          <div class="card-container animate-draw" 
+              [attr.data-mazo]="cartaActiva()?.idMazo"
+              [attr.data-id]="cartaActiva()?.id">
+            
+            <div class="card-frame">
+              <!-- Imagen de la carta -->
+              <img [src]="cartaActiva()?.imagen" [alt]="cartaActiva()?.nombre">
+              
+              <!-- Pie de carta: Pergamino con texto -->
+              <!--div class="card-info">
+                <h3>{{ cartaActiva()?.nombre }}</h3>
+                <p-->
+                  <!-- Aquí podrías añadir un campo 'descripcion' en tu Mock de cartas más adelante -->
+                  <!--Explora las profundidades de la mazmorra. Ten cuidado con lo que acecha en las sombras de esta estancia.
+                </p>
+              </div-->
+            </div>
+
+          </div>
+        } @else {
+          <!-- Pergamino de Lore de la Misión -->
+          <div class="pergamino-container">
+            <div class="pergamino-body">              
+              <div class="pergamino-content">
+                <p class="mision-lore">{{ mision.lore }}</p>
+                
+                <!--div class="mision-objetivos">
+                  <p><strong>Objetivo:</strong> {{ mision.salaObjetivo }}</p>
+                </div-->
+              </div>
+            </div>
+          </div>
+        }
+      </main>
+
+      <!-- BOTONERA: Bloques de Piedra Grabada -->
+      <footer class="controls-grid">
+        
+        <!-- FASE INICIAL: Elige qué explorar -->
+        @if (faseActual() === 'INICIO') {
+
+          <!-- Botón de Salas -->
+          <button (click)="robarCarta('M-SAL')" class="btn-deck btn-salas">
+            <span class="btn-label">SALAS</span>    
+            <div class="deck-counters">
+              <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
+              <div class="counter-badge robo" title="Cartas en mazo">
+                <span class="count-value">{{ contadores().salasRobo }}</span>
+                /
+                <span class="count-value">{{ contadores().salasDescarte }}</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Botón de Trampas -->
+          <button (click)="robarCarta('M-TRA')" class="btn-deck btn-trampas">
+            <span class="btn-label">TRAMPAS</span>
+            <div class="dec"></div>    
+            <div class="deck-counters">
+              <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
+              <div class="counter-badge robo" title="Cartas en mazo">
+                <span class="count-value">{{ contadores().trampasRobo }}</span>
+                /
+                <span class="count-value">{{ contadores().trampasDescarte }}</span>
+              </div>
+            </div>
+            <div class="dice-trampas">
+              <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
+              <div class="trampas-badge caras" title="Dado de trampas">
+                <span class="dice-value">{{ this.partida().dadoTrampa }}</span>
+              </div>
+            </div>
+          </button>
+
+          <!-- Botón de Pasillos -->
+          <button (click)="robarCarta('M-PAS')" class="btn-deck btn-pasillos">
+            <span class="btn-label">PASILLOS</span>    
+            <div class="deck-counters">
+              <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
+              <div class="counter-badge robo" title="Cartas en mazo">
+                <span class="count-value">{{ contadores().pasillosRobo }}</span>
+                /
+                <span class="count-value">{{ contadores().pasillosDescarte }}</span>
+              </div>
+            </div>
+          </button>
+          <button (click)="cambiarFase('TURNO_MB')" class="btn-deck btn-mb-turn">
+            <span class="btn-label">TURNO MB</span>
+          </button>
+        }
+        <!-- FASE SALA ABIERTA: Opciones dentro de la estancia -->
+        @if (faseActual() === 'SALA_ABIERTA') {
+                <!-- Botón de Salas -->
+          <button (click)="cambiarFase('INICIO')" class="btn-deck">
+            <span class="btn-label">VOLVER</span>    
+          </button>
+          <button (click)="robarCarta('M-ATR')" class="btn-deck btn-atrezo">
+            <span class="btn-label">ATREZOS</span>    
+            <div class="deck-counters">
+              <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
+              <div class="counter-badge robo" title="Cartas en mazo">
+                <span class="count-value">{{ contadores().atrezosRobo }}</span>
+                /
+                <span class="count-value">{{ contadores().atrezosDescarte }}</span>
+              </div>
+            </div>
+          </button>
+          <button (click)="robarCarta('M-ESP')" class="btn-deck btn-especial" 
+            [disabled]="cartaActiva()?.tipo !== 'Especial'"
+            [class.is-locked]="cartaActiva()?.tipo !== 'Especial'">
+            <span class="btn-label">SALAS ESPECIALES</span>    
+            <div class="deck-counters">
+              <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
+              <div class="counter-badge robo" title="Cartas en mazo">
+                <span class="count-value">{{ contadores().salasEspecialesRobo }}</span>
+                /
+                <span class="count-value">{{ contadores().salasEspecialesDescarte }}</span>
+              </div>
+            </div>
+          </button>
+        }
+
+        <!-- NUEVA FASE: TURNO DEL MALVADO BRUJO -->
+        @if (faseActual() === 'TURNO_MB') {
+          <button (click)="cambiarFase('INICIO')" class="btn-deck btn-back">
+            <span class="btn-label">VOLVER</span>
+          </button>
+
+          <button (click)="ejecutarTiradaPeligro()" class="btn-deck btn-hazard">
+            <span class="btn-label">TIRADA PELIGRO</span>
+          </button>
+
+          <button (click)="ejecutarTiradaErrantes()" class="btn-deck btn-monsters">
+            <span class="btn-label">ERRANTES</span>
+          </button>
+          <!-- Botón de Eventos -->
+          <button (click)="robarCarta('M-EVI')" class="btn-deck btn-eventos">
+            <span class="btn-label">EVENTOS</span>    
+          </button>
+        }
+      </footer>
+      } @else {
+      <p>Error: No se ha podido encontrar la misión activa.</p>
+    }
+  }
+</div>
+
+@if (mensajeAlerta()) {
+  <div class="modal-overlay" (click)="cerrarAlerta()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ mensajeAlerta()?.titulo }}</h2>
+      </div>
+      <div class="modal-body">
+        <p>{{ mensajeAlerta()?.cuerpo }}</p>
+      </div>
+      <button class="btn-deck btn-close" (click)="cerrarAlerta()">
+        <span class="btn-label">ENTENDIDO</span>
+      </button>
+    </div>
+  </div>
+}
