@@ -53,8 +53,8 @@ export class DeckService {
   }
 
   /**
- * Ahora devuelve el Observable para que el Dashboard pueda "enterarse" de cuándo acaba
- */
+   * Ahora devuelve el Observable para que el Dashboard pueda "enterarse" de cuándo acaba
+   */
   inicializarDatos(): Observable<any> {
     
     return forkJoin({
@@ -67,24 +67,171 @@ export class DeckService {
         this._mazosCargados.set(res.mazos);
         this._biblioteca.set(res.cartas);
         this._misiones.set(res.misiones);
-        let estadoAtrezo =  this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ATR'), 'M-ATR');
-        console.log('Atrezos', estadoAtrezo);
-        let estadoSalas = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-SAL'), 'M-SAL');
-        console.log('Salas', estadoSalas);
-        let estadoPasillos = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-PAS'), 'M-PAS');
-        console.log('Pasillos', estadoPasillos);
-        let estadoEspeciales = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ESP'), 'M-ESP');
-        console.log('Salas Especiales', estadoEspeciales);
-        let estadoTrampas = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-TRA'), 'M-TRA');
-        console.log('Trampas', estadoTrampas);
-        let estadoMazmorras = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-MAZ'), 'M-MAZ');
-        console.log('Mazmorras', estadoMazmorras);
-        this._cartasEnPartida.set([...estadoAtrezo, ...estadoSalas, ...estadoPasillos, 
-          ...estadoEspeciales, ...estadoTrampas, ...estadoMazmorras]);
-        console.log(this._cartasEnPartida());
-
       })
     );
+  }
+
+  private testDeCargaMazos() {
+    let estadoAtrezoFull =  this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ATR'));
+    console.log('Todos los Atrezos', estadoAtrezoFull);
+    let estadoAtrezo =  this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ATR' && !['Cofre', 'Sin Atrezo'].includes(c.tipo)));
+    console.log('Atrezos', estadoAtrezo);
+    let estadoAtrezoCofres =  this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ATR' && c.tipo === 'Cofre'));
+    console.log('Cofres', estadoAtrezoCofres);
+    let estadoSinAtrezo =  this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ATR' && c.tipo === 'Sin Atrezo'));
+    console.log('Sin Atrezo', estadoSinAtrezo);
+    let estadoSalasFull = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-SAL'));
+    console.log('Todas las Salas', estadoSalasFull);
+    let estadoSalasNormales = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-SAL' && c.tipo === 'Normal'));
+    console.log('Salas normales', estadoSalasNormales);
+    let estadoSalasEspeciales = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-SAL' && c.tipo === 'Especial'));
+    console.log('Salas especiales', estadoSalasEspeciales);
+    let estadoSalaObjetivo = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-SAL' && c.tipo === 'Objetivo'));
+    console.log('Salas objetivo', estadoSalaObjetivo);
+    let estadoSalaEscalera = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-SAL' && c.tipo === 'Escalera'));
+    console.log('Salas escalera', estadoSalaEscalera);
+    let estadoPasillos = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-PAS'));
+    console.log('Pasillos', estadoPasillos);
+    let estadoEspeciales = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-ESP'));
+    console.log('Salas Especiales', estadoEspeciales);
+    let estadoTrampas = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-TRA'));
+    console.log('Trampas', estadoTrampas);
+    let estadoMazmorras = this.crearEstadoMazo(this.biblioteca().filter(c => c.idMazo === 'M-MAZ'));
+    console.log('Mazmorras', estadoMazmorras);
+    this._cartasEnPartida.set([...estadoAtrezoFull, ...estadoAtrezoCofres, ...estadoSalasFull, ...estadoPasillos, 
+      ...estadoEspeciales, ...estadoTrampas, ...estadoMazmorras]);
+    console.log(this._cartasEnPartida());
+  }
+  // deck.service.ts
+
+  // Mazo auxiliar para los cofres que entrarán más tarde (Peligro 5 y 9)
+  private _reservaCofres = signal<EstadoMazoMision[]>([]);
+
+  /**
+   * MÉTODO PRINCIPAL: Configura todos los mazos según las reglas de la misión
+   */
+  configurarMision(mision: Mision) {
+    const biblioteca = this.biblioteca();
+    let todosLosMazosConfigurados: EstadoMazoMision[] = [];
+
+    // --- PASO 1: TRAMPAS Y PASILLOS (COMPLETOS) ---
+    const trampas = this.crearEstadoMazo(biblioteca.filter(c => c.idMazo === 'M-TRA'));
+    const pasillos = this.crearEstadoMazo(biblioteca.filter(c => c.idMazo === 'M-PAS'));
+    
+    todosLosMazosConfigurados.push(...trampas, ...pasillos);
+
+    // --- PASO 2: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
+    const mazoAtrezo = this.generarMazoAtrezo(mision, biblioteca);
+    todosLosMazosConfigurados.push(...mazoAtrezo);
+
+    // --- PASO 3: MAZO DE SALAS (LÓGICA CLÍMAX / BOSS) ---
+    const mazoSalas = this.generarMazoSalas(mision, biblioteca);
+    todosLosMazosConfigurados.push(...mazoSalas);
+
+    // --- PASO 4: MAZMORRAS (OPCIONAL/RESTO) ---
+    const mazmorras = this.crearEstadoMazo(biblioteca.filter(c => c.idMazo === 'M-MAZ'));
+    todosLosMazosConfigurados.push(...mazmorras);
+
+    // Guardamos el estado final de la partida
+    this._cartasEnPartida.set(todosLosMazosConfigurados);
+    console.log(todosLosMazosConfigurados);
+  }
+
+  private generarMazoAtrezo(mision: Mision, biblioteca: Carta[]): EstadoMazoMision[] {
+    const todasAtrezo = biblioteca.filter(c => c.idMazo === 'M-ATR');
+    let mazoFinal: EstadoMazoMision[] = [];
+
+    // 1. COFRES: Barajar pool completo antes de extraer
+    const poolCofres = this.crearEstadoMazo(todasAtrezo.filter(c => c.tipo === 'Cofre'));
+    const cofresBarajados = this.barajar(poolCofres);
+    
+    const cofreInicial = cofresBarajados.slice(0, 1);
+    this._reservaCofres.set(cofresBarajados.slice(1, 5)); // Reserva para peligro 5 y 9
+    mazoFinal.push(...cofreInicial);
+
+    // 2. SIN ATREZO: Barajar pool completo antes de extraer
+    const poolSinAtrezo = this.crearEstadoMazo(todasAtrezo.filter(c => c.tipo === 'Sin Atrezo'));
+    const sinAtrezoSeleccionados = this.barajar(poolSinAtrezo)
+      .slice(0, mision.configuracion!.atrezoSinAtrezo);
+    mazoFinal.push(...sinAtrezoSeleccionados);
+
+    // 3. OBLIGATORIOS (Ej: "2-Libreria")
+    mision.configuracion!.idsAtrezoFijos.forEach(item => {
+      const [cantStr, tipoBusqueda] = item.includes('-') ? item.split('-') : ['1', item];
+      const cantidad = Number(cantStr) || 1;
+
+      // Buscamos variantes y las barajamos para que no salga siempre la misma librería
+      const variantes = this.crearEstadoMazo(todasAtrezo.filter(c => c.tipo === tipoBusqueda.trim()));
+      const variantesAleatorias = this.barajar(variantes);
+      
+      for (let i = 0; i < cantidad; i++) {
+        if (variantesAleatorias.length > 0) {
+          // Usamos el módulo para rotar si piden más de las que existen, pero ya barajadas
+          const seleccionada = variantesAleatorias[i % variantesAleatorias.length];
+          mazoFinal.push(seleccionada);
+        }
+      }
+    });
+
+    // 4. ATREZOS AL AZAR (Rellenar con lo restante)
+    const tiposExcluidos = mision.configuracion!.idsAtrezoExcluido;
+    
+    const poolCandidatos = todasAtrezo.filter(c => 
+      c.tipo !== 'Cofre' && 
+      c.tipo !== 'Sin Atrezo' && 
+      !tiposExcluidos.includes(c.tipo) &&
+      // Evitamos duplicar cartas que ya han sido seleccionadas como fijas/obligatorias
+      !mazoFinal.some(yaEnMazo => yaEnMazo.idCarta === c.id)
+    );
+
+    // Barajamos el pool de candidatos sobrantes antes de elegir los necesarios
+    const azarSeleccionados = this.barajar(this.crearEstadoMazo(poolCandidatos))
+      .slice(0, mision.configuracion!.atrezoAzar);
+
+    mazoFinal.push(...azarSeleccionados);
+
+    // Mezcla final de todo el mazo de Atrezo y asignación de posiciones
+    return this.barajar(mazoFinal).map((carta, index) => ({
+      ...carta,
+      posicion: index
+    }));
+  }
+
+  private generarMazoSalas(mision: Mision, biblioteca: Carta[]): EstadoMazoMision[] {
+    const todasSalas = biblioteca.filter(c => c.idMazo === 'M-SAL');
+
+    // 1. SALAS NORMALES: Barajamos todas y luego cogemos las N que pide la misión
+    const poolNormales = todasSalas.filter(c => c.tipo === 'Normal');
+    const normalesSeleccionadas = this.barajar(this.crearEstadoMazo(poolNormales))
+      .slice(0, mision.configuracion!.salasNormales);
+
+    // 2. SALAS ESPECIALES: Barajamos todas y luego cogemos las N que pide la misión
+    const poolEspeciales = todasSalas.filter(c => c.tipo === 'Especial');
+    const especialesSeleccionadas = this.barajar(this.crearEstadoMazo(poolEspeciales))
+      .slice(0, mision.configuracion!.salasEspeciales);
+
+    // 3. MEZCLA INICIAL: Juntamos las seleccionadas y barajamos el grupo completo
+    let mazoMezclado = this.barajar([...normalesSeleccionadas, ...especialesSeleccionadas]);
+
+    // 4. EL CLÍMAX: Extraemos 2 cartas al azar del mazo ya mezclado
+    const dosParaElFinal = mazoMezclado.splice(0, 2);
+    
+    // 5. SALA OBJETIVO: La buscamos y la juntamos con las dos anteriores
+    const salaObjetivoBase = todasSalas.find(c => c.tipo === 'Objetivo');
+    let bloqueFinal: EstadoMazoMision[] = [...dosParaElFinal];
+    
+    if (salaObjetivoBase) {
+      bloqueFinal.push(this.mapearACartaEstado(salaObjetivoBase));
+    }
+
+    // Barajamos el bloque de 3 para que el Boss no sepa ni él dónde está
+    const bloqueFinalBarajado = this.barajar(bloqueFinal);
+
+    // 6. ENSAMBLAJE: Resto del mazo + Bloque final de 3
+    const mazoFinal = [...mazoMezclado, ...bloqueFinalBarajado];
+
+    // Asignamos posiciones finales (0 arriba ... X abajo)
+    return mazoFinal.map((c, i) => ({ ...c, posicion: i }));
   }
 
   /**
@@ -95,8 +242,9 @@ export class DeckService {
     
     if (mision) {
       this.misionActual.set(mision);
-      this.inicializarPartida();
-      console.log(this.misionActual())
+      this.inicializarPartida(mision);
+      // this.testDeCargaMazos();
+      this.configurarMision(mision);
       // Aquí podrías disparar la lógica de "Generar Mazos" 
       // basada en la configuración de esta misión.
       //this.prepararMazosPartida(mision); 
@@ -106,9 +254,7 @@ export class DeckService {
     }
   }
 
-  inicializarPartida() {
-    const mision = this.misionActual();
-
+  inicializarPartida(mision: Mision) {
     if (mision) {
       this._partida.update(actual => {
         // Si 'actual' es null (estado inicial), creamos un objeto base
@@ -185,7 +331,7 @@ export class DeckService {
   private actualizarFaseSegunMazo(idMazo: string, cantidad: number) {
     if (idMazo === 'M-SAL' && cantidad > 0) {
       this.faseActual.set('SALA_ABIERTA');
-    } else if (['M-TRP', 'M-MAZ', 'M-EVE', 'M-EVI'].includes(idMazo)) {
+    } else if (['M-TRP', 'M-MAZ', 'M-EVE', 'M-EVI', 'M-ATR'].includes(idMazo)) {
       this.faseActual.set('INICIO');
     }
   }
@@ -196,6 +342,9 @@ export class DeckService {
   }
 
   cambiarFase(fase: FaseTurno) {
+    if(fase === 'TURNO_MB') {
+      this._cartaActiva.set(null);
+    }
     this.faseActual.set(fase);
   }
 
@@ -331,6 +480,28 @@ export class DeckService {
   }
 
   /**
+   * Transforma una Carta de la biblioteca en un objeto de estado para la partida.
+   * Genera un ID único para cada "instancia" física de la carta.
+   */
+  private mapearACartaEstado(carta: Carta): EstadoMazoMision {
+    return {
+      // ID único de esta instancia (para que no colisionen cartas iguales)
+      id: crypto.randomUUID(), 
+      idPartida: crypto.randomUUID(), 
+      // Referencia al ID original de la biblioteca (ej: 'SAL-01')
+      idCarta: carta.id,
+      
+      // El mazo al que pertenece en esta partida
+      idMazo: carta.idMazo,
+      
+      // Estado inicial de la carta en el tablero
+      posicion: 0, // Se sobreescribirá al barajar el mazo final
+      pila: 'Robo',
+      reciclable: ['M-TRA', 'M-EVI', 'M-EVE', 'M-PAS'].includes(carta.idMazo)
+    };
+  }
+
+  /**
    * Parsea la hoja de Mazos usando el nuevo motor PapaParse
    */
   parseMazos(csv: string): Mazo[] {
@@ -418,17 +589,10 @@ export class DeckService {
     return String(valor).split(separador).map(id => id.trim()).filter(id => id !== '');
   }
 
-  private crearEstadoMazo(cartas: Carta[], idMazo: string): EstadoMazoMision[] {
+  private crearEstadoMazo(cartas: Carta[]): EstadoMazoMision[] {
     const estados = cartas.flatMap(carta => {
       // Si la carta tiene numeroCopias, creamos tantas instancias como diga
-      const copias = Array(carta.numeroCopias || 1).fill(null).map(() => ({
-        id: crypto.randomUUID(),
-        idCarta: carta.id,
-        idMazo: idMazo,
-        pila: 'Robo',
-        posicion: 0,
-        reciclable: true
-      }));
+      const copias = Array(carta.numeroCopias || 1).fill(null).map(() => (this.mapearACartaEstado(carta)));
       return copias;
     });
 

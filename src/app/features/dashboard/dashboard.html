@@ -44,17 +44,27 @@
             </div>
 
           </div>
+        } @else if(faseActual() == 'TURNO_MB'){
+          <div class="pergamino-container">
+            <div class="pergamino-body">
+              <img src="/imagenes/MB.png"> 
+              <div class="pergamino-texto">
+                @if(encuentro()) {
+                  <p>Monstruos: {{ encuentro()?.monstruos }}</p>
+                  <p>3 o 4 héroes: {{ encuentro()?.heroes3o4 }}</p>
+                  <p>2 héroes: {{ encuentro()?.heroes2 }}</p>
+                  <p>1 héroe: {{ encuentro()?.heroe1 }}</p>
+                  <p>Alternativas: {{ encuentro()?.alternativa }}</p>
+                }
+              </div>              
+            </div>
+          </div>
         } @else {
           <!-- Pergamino de Lore de la Misión -->
-          <div class="pergamino-container">
-            <div class="pergamino-body">              
-              <div class="pergamino-content">
+          <div class="lore-container">
+            <div class="lore-body">
+              <img src="/misiones/Graok.png">
                 <p class="mision-lore">{{ mision.lore }}</p>
-                
-                <!--div class="mision-objetivos">
-                  <p><strong>Objetivo:</strong> {{ mision.salaObjetivo }}</p>
-                </div-->
-              </div>
             </div>
           </div>
         }
@@ -118,9 +128,9 @@
         <!-- FASE SALA ABIERTA: Opciones dentro de la estancia -->
         @if (faseActual() === 'SALA_ABIERTA') {
                 <!-- Botón de Salas -->
-          <button (click)="cambiarFase('INICIO')" class="btn-deck">
+          <!--button (click)="cambiarFase('INICIO')" class="btn-deck">
             <span class="btn-label">VOLVER</span>    
-          </button>
+          </button-->
           <button (click)="robarCarta('M-ATR')" class="btn-deck btn-atrezo">
             <span class="btn-label">ATREZOS</span>    
             <div class="deck-counters">
@@ -144,6 +154,9 @@
                 <span class="count-value">{{ contadores().salasEspecialesDescarte }}</span>
               </div>
             </div>
+          </button>
+          <button (click)="ejecutarTiradaEncuentros()" class="btn-deck btn-hazard">
+            <span class="btn-label">TIRADA ENCUENTROS</span>
           </button>
         }
 

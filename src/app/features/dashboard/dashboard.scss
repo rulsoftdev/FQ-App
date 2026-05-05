@@ -342,3 +342,33 @@
   to { transform: scale(1); opacity: 1; }
 }
 
+.pergamino-container {
+  background-image: url(/textures/pergamino.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  margin: 0px;
+  height: stretch;
+  align-content: flex-start;
+  background-position: center;
+  .pergamino-body{
+    font-family: "Cinzel", serif;
+    color: #2c1e11;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+  img{
+    width: 75%;
+    position: relative;
+    top: 40px;
+    left: 40px;
+  }
+  .pergamino-texto{
+    padding: 40px 20px;
+  }
+}
+
+.lore-container {
+  img{
+    width: 100%;
+  }
+}

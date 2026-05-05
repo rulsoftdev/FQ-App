@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DeckService, FaseTurno } from '../../core/services/deck';
+import { EncuentrosService } from '../../core/services/encuentros';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,7 @@ import { DeckService, FaseTurno } from '../../core/services/deck';
 export class Dashboard implements OnInit{
   // Inyectamos el servicio que maneja la lógica de los mazos
   private deckService = inject(DeckService);
+  private encuentrosService = inject(EncuentrosService);
 
   // Exponemos la carta activa como un Signal para el HTML
   public cartaActiva = this.deckService.cartaActiva;
@@ -22,6 +24,7 @@ export class Dashboard implements OnInit{
   public mensajeAlerta = this.deckService.mensajeAlerta;
   // Accedemos al signal del servicio
   public mision = this.deckService.misionActual;
+  public encuentro = this.encuentrosService.encuentro;
 
   // Estado local para la UI
   public cargando = signal<boolean>(true);
@@ -41,6 +44,20 @@ export class Dashboard implements OnInit{
       },
       error: (err) => {
         console.error('Error crítico al iniciar el juego', err);
+        this.cargando.set(false);
+      }
+    });
+    this.encuentrosService.cargarEncuentros().subscribe({
+      next: () => {
+        const encuentros =  this.encuentrosService.encuentros();
+        if(encuentros.length > 0) {
+          console.log(`🎮 Tabla de encuentros de ${encuentros[0].tipoEncuentro} cargada`);
+        } else {
+          console.error('La tabla está vacía')
+        }
+      },
+      error: (err) => {
+        console.error('Error crítico al cargar la tabla de encuentros', err);
         this.cargando.set(false);
       }
     });
@@ -92,6 +109,11 @@ export class Dashboard implements OnInit{
 
   public cambiarFase(fase: FaseTurno) {
     this.deckService.cambiarFase(fase);
+  }
+
+  public ejecutarTiradaEncuentros(){
+    this.deckService.cambiarFase('TURNO_MB');
+    this.encuentrosService.tirarEncuentros(this.partida().nivelPeligroActual, null);
   }
 
   public ejecutarTiradaPeligro() {

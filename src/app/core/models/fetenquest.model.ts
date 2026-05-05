@@ -73,3 +73,13 @@ export interface PartidaEnCurso {
   dadoTrampa: string;
   fechaGuardado: Date;
 }
+
+export interface Encuentro {
+  tipoEncuentro: string;
+  resultado: string;
+  monstruos: string;
+  heroes3o4: String;
+  heroes2: String;
+  heroe1: String;
+  alternativa: String; 
+}
