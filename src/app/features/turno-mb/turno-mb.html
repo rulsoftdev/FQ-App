@@ -1,0 +1,65 @@
+<div class="mb-container">
+  <main class="mb-display">
+    @if (faseActualMB() === 'INICIO_MB') {
+      <div class="inicio-mb">
+        <img src="/imagenes/MB.png" />
+      </div>
+    }
+    @if (faseActualMB() === 'MENSAJE') {
+      <div class="pergamino-mb-texture">
+          <div class="texto-animado">
+            <div class="modal-header">
+              <h2>RESULTADO DE LA TIRADA: {{ this.mensajeEscrito().resultadoDado }}</h2>
+            </div>
+            <div class="modal-body">
+              <p>{{ this.mensajeEscrito().texto }}</p>
+            </div>
+          </div>
+      </div>
+    } @else if (faseActualMB() === 'BESTIARIO') {
+      <div class="pergamino-mb-texture">
+        <div class="bestiario-container">
+          <select (change)="seleccionarTabla($event)">
+            <option value="pieles-verdes">Pieles Verdes</option>
+            <option value="no-muertos">No Muertos</option>
+            <option value="caos">Legiones del Caos</option>
+          </select>
+          <table class="tabla-monstruos">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Mv</th>
+                <th>At</th>
+                <th>Df</th>
+                <th>PC</th>
+                <th>PM</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of monstruosSeleccionados(); track m.id) {
+                <tr>
+                  <td>{{ m.nombre }}</td>
+                  <td>{{ m.mv }}</td>
+                  <td>{{ m.at }}</td>
+                  <td>{{ m.df }}</td>
+                  <td>{{ m.pc }}</td>
+                  <td>{{ m.pm }}</td>
+                </tr>
+                @if (m.especial) {
+                  <tr class="habilidad-row">
+                    <td colspan="6">✨ {{ m.especial }}</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+    
+  </main>
+  <!-- BOTONERA: Bloques de Piedra Grabada -->
+  <footer>
+    <app-acciones></app-acciones>
+  </footer>
+</div>

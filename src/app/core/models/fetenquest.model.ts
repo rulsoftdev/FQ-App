@@ -2,6 +2,8 @@
 export type JuegoBase = 'FetenQuest' | 'ChaoQuest' | 'Heroquest' | 'Otro';
 export type TipoPila = 'Robo' | 'Descarte' | 'Tablero' | 'Mano' | 'Fuera'; // Añadimos Tablero y Mano para la UI
 export type TipoMazo = 'Salas' | 'Atrezos' | 'Salas especiales' | 'Pasillos' | 'Mazmorras' | 'Trampas' | 'Eventos interiores' | 'Eventos exteriores';
+export type FaseTurnoHeroes = 'INICIO_HEROES' | 'ENCUENTRO';
+export type FaseTurnoMB = 'INICIO_MB' | 'MENSAJE' | 'BESTIARIO';
 
 export interface Mazo {
   id: string;
@@ -79,7 +81,26 @@ export interface Encuentro {
   resultado: string;
   monstruos: string;
   heroes3o4: String;
-  heroes2: String;
-  heroe1: String;
-  alternativa: String; 
+  heroes2: string;
+  heroe1: string;
+  alternativa: string; 
+}
+
+export interface Monstruo {
+  id: string;
+  familia: string;
+  categoria: number;
+  nombre: string;
+  rango: string;
+  mv: string;
+  at: string;
+  df: string;
+  pc: string;
+  pm: string;
+  especial: number;
+}
+
+export interface MensajeTurnoMB {
+  resultadoDado: number;
+  texto: string;
 }

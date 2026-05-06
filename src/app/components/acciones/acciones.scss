@@ -1,0 +1,154 @@
+// --- Botones: Bloques de Piedra Forjada ---
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+
+  button {
+    background: url('/textures/dark_stone_texture.png');
+    background-size: 200px;
+    border: 2px solid #555;
+    border-radius: 6px;
+    padding: 15px;
+    color: #b89b5e;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1), 4px 4px 10px rgba(0,0,0,0.5);
+    transition: all 0.2s;
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8);
+    }
+
+    &:hover {
+      border-color: #b89b5e;
+      color: #ffd700;
+    }
+    
+    // Colores específicos por mazo
+    &.btn-salas { border-left: 5px solid #3498db; }
+    &.btn-trampas { border-left: 5px solid #e74c3c; }
+  }
+}
+
+.btn-deck {
+  position: relative; // Para que los contadores se posicionen respecto al botón
+  
+  .deck-counters {
+    position: absolute;
+    top: -8px;
+    right: -5px;
+    display: flex;
+    gap: 4px;
+    pointer-events: none; // Para que no interfieran con el clic del botón
+
+    .counter-badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border: 1px solid rgba(184, 155, 94, 0.5); // Borde oro sutil
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+
+      &.robo {
+        background: linear-gradient(145deg, #2c3e50, #000); // Azul muy oscuro/Piedra
+        color: #ffd700; // Oro
+      }
+
+      &.descarte {
+        background: linear-gradient(145deg, #4b0000, #200000); // Rojo sangre oscuro
+        color: #ff9999;
+      }
+
+      .count-value {
+        text-shadow: 1px 1px 2px black;
+      }
+    }
+  }
+  .dice-trampas {
+    position: absolute;
+    bottom: -8px;
+    right: -5px;
+    display: flex;
+    gap: 4px;
+    pointer-events: none; // Para que no interfieran con el clic del botón
+
+    .trampas-badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border: 1px solid rgba(184, 155, 94, 0.5); // Borde oro sutil
+      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+
+      &.caras {
+        background: linear-gradient(145deg, #2c3e50, #000); // Azul muy oscuro/Piedra
+        color: #ffd700; // Oro
+      }
+
+      .dice-value {
+        text-shadow: 1px 1px 2px black;
+      }
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    filter: grayscale(0.8) brightness(0.6); // Oscurece y quita color
+    opacity: 0.7;
+    border-color: #444; // Borde de piedra apagada
+    
+    .btn-label {
+      color: #666; // Texto grisáceo
+    }
+
+    .counter-badge {
+      filter: contrast(0.5); // Apaga los colores de los contadores
+    }
+  }
+
+  &.is-locked {
+    // Estilo extra si quieres que parezca "bloqueado por magia"
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+    }
+  }
+
+  .lock-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 0.8rem;
+    opacity: 0.6;
+  }
+}
+
+.btn-mb-turn {
+  border-color: #5d3fd3; // Un púrpura místico
+  &::before { background-image: url('/textures/dark_stone_texture.png'); }
+  .btn-label { color: #d1b3ff; }
+}
+
+.btn-subtext {
+  display: block;
+  font-size: 0.6rem;
+  font-family: 'MedievalSharp', cursive;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: -5px;
+}
+
+// Botón de Volver (especial)
+.btn-back {
+  border-color: #666;
+  opacity: 0.9;
+}

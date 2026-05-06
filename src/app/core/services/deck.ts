@@ -2,10 +2,10 @@ import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { stringToBoolean, parseFullCsv } from '../utils'; // Importamos las utils
-import { Carta, EstadoMazoMision, TipoPila, PartidaEnCurso, Mision, Mazo } from '../models/fetenquest.model'; // Ajusta rutas
+import { Carta, EstadoMazoMision, TipoPila, PartidaEnCurso, Mision, Mazo, FaseTurnoHeroes } from '../models/fetenquest.model'; // Ajusta rutas
 import { MOCK_CARTAS, MOCK_ESTADO_PARTIDA, MOCK_MAZOS, MOCK_PARTIDA_ACTIVA, MOCK_MISION_AVENTURA } from '../../../assets/data/mocks';
 import { forkJoin, Observable } from 'rxjs';
-export type FaseTurno = 'INICIO' | 'SALA_ABIERTA' | 'EVENTO' | 'PASILLO' | 'TURNO_MB';
+export type FaseTurno = 'HEROES' | 'SALA_ABIERTA' | 'EVENTO' | 'PASILLO' | 'MB';
 // En deck.service.ts o en tus constantes
 const ESCALA_DADOS_TRAMPA = ['1D12', '1D10', '1D8', '1D6', '1D4'];
 
@@ -35,7 +35,8 @@ export class DeckService {
   // 1. Estado privado de las cartas (Signal)
   // Inicializamos con el mock de la partida activa
   private _cartasEnPartida = signal<EstadoMazoMision[]>(MOCK_ESTADO_PARTIDA);
-  public faseActual = signal<FaseTurno>('INICIO');
+  public faseActual = signal<FaseTurno>('HEROES');
+  public faseTurnoHeroes = signal<FaseTurnoHeroes>('INICIO_HEROES')
 
   public misionActual = signal<Mision | null>(null);
   // 2. Carta que se está mostrando actualmente en el Dashboard
@@ -293,6 +294,7 @@ export class DeckService {
 
     // 3. Gestión de Fases
     this.actualizarFaseSegunMazo(idMazo, cartasDisponibles.length);
+    this.resetearFase();
 
     // 4. Lógica de reciclaje si no hay cartas
     if (cartasDisponibles.length === 0) {
@@ -332,20 +334,24 @@ export class DeckService {
     if (idMazo === 'M-SAL' && cantidad > 0) {
       this.faseActual.set('SALA_ABIERTA');
     } else if (['M-TRP', 'M-MAZ', 'M-EVE', 'M-EVI', 'M-ATR'].includes(idMazo)) {
-      this.faseActual.set('INICIO');
+      this.faseActual.set('HEROES');
     }
   }
 
   // Método para resetear el turno manualmente si es necesario
   resetearFase() {
-    this.faseActual.set('INICIO');
+    this.faseTurnoHeroes.set('INICIO_HEROES');
   }
 
   cambiarFase(fase: FaseTurno) {
-    if(fase === 'TURNO_MB') {
+    if(fase === 'MB') {
       this._cartaActiva.set(null);
     }
     this.faseActual.set(fase);
+  }
+
+  cambiarFaseTurnoMB(fase: FaseTurnoHeroes){
+      this.faseTurnoHeroes.set(fase);
   }
 
   private procesarMovimientoPila(proxima: any) {
@@ -431,48 +437,6 @@ export class DeckService {
     if (nuevoNivel >= 0 && nuevoNivel <= 9) {
       this._partida.update(p => ({ ...p, nivelPeligroActual: nuevoNivel }));
     }
-  }
-
-  public tirarPeligro() {
-    const dado = Math.floor(Math.random() * 6) + 1;
-    let resultado = "";
-
-    if (dado <= 3) {
-      resultado = "💀 CALAVERA: Realiza Tirada de Evento (1D10). Si es ≤ Nivel de Peligro, tira en Tabla de Eventos.";
-    } else if (dado <= 5) {
-      resultado = "🛡️ ESCUDO BLANCO: La suerte os es propicia, no ocurre nada.";
-    } else {
-      // Escudo Negro
-      this.actualizarNivelPeligro(1);
-      resultado = "🌑 ESCUDO NEGRO: El mal acecha... ¡El Nivel de Peligro aumenta en 1!";
-    }
-
-    this.mensajeAlerta.set({
-      titulo: `TIRADA DE PELIGRO: ${dado}`,
-      cuerpo: resultado
-    });
-  }
-
-  public tirarErrantes(mision: Mision) {
-    const dado = Math.floor(Math.random() * 6) + 1;
-    let monstruo = "";
-    let detalle = "";
-
-    if (dado === 1 || dado === 2) {
-      monstruo = mision.monstruoErrante;
-      detalle = "2 Monstruos Errantes a 1D6 casillas.";
-    } else if (dado === 3) {
-      monstruo = mision.monstruoErranteSuperior;
-      detalle = "1 Monstruo Errante Superior a 1D6 casillas.";
-    } else {
-      monstruo = mision.monstruoErrante;
-      detalle = "1 Monstruo Errante a 1D6 casillas.";
-    }
-
-    this.mensajeAlerta.set({
-      titulo: `ENCUENTRO: ${monstruo}`,
-      cuerpo: `Resultado del dado: ${dado}. Aparece ${detalle}`
-    });
   }
 
   cerrarAlerta() {

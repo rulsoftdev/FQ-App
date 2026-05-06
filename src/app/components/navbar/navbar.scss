@@ -1,0 +1,70 @@
+.nav-mini {
+  display: flex;
+  justify-content: right;
+  padding: 10px 0;
+  margin-top: -5px; /* Lo pegamos un poco al header */
+}
+
+.piedra-base {
+  display: flex;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 5px 5px;
+  border-radius: 30px; /* Forma de píldora */
+  border: 1px solid #333;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  gap: 10px;
+}
+
+.sello {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 30px; /* Tamaño reducido */
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  filter: brightness(0.5);
+  transform: scale(0.85);
+  outline: none;
+}
+
+.sello.activo {
+  filter: brightness(1.1);
+  transform: scale(1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Colores de Lacre Compactos */
+.azul {
+  background: radial-gradient(circle, #2a52be, #1a237e);
+  border: 2px solid #0d123e;
+}
+
+.rojo {
+  background: radial-gradient(circle, #b71c1c, #4a0000);
+  border: 2px solid #2a0000;
+}
+
+.sello span {
+  color: #f0d1a0;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 2px black;
+}
+
+.runa {
+  color: #444;
+  font-size: 1rem;
+  font-family: serif;
+  user-select: none;
+}
+
+.sello:hover:not(.activo) {
+  filter: brightness(0.8);
+}

@@ -1,0 +1,89 @@
+.inicio-mb{
+  img{
+    width: 100%;
+  }
+}
+
+/*.pergamino-mb-texture {
+  background-image: url('/textures/pergamino.png'); 
+  background-size: 100%;
+  background-repeat: round;
+  min-height: 500px;
+  padding-bottom: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: left;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1b1210;
+  //box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
+}*/
+
+.pergamino-mb-texture {
+  background-image: url('/textures/pergamino.png');
+  /* Cambiamos 'round' por '100% 100%' para que cubra todo el contenedor */
+  background-size: 100% 100%; 
+  background-repeat: no-repeat;
+  
+  /* Dejamos que el contenido y el padding definan la altura */
+  padding-bottom: 60px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 35px;
+
+/* Importante para que el padding no sume al ancho total */
+  box-sizing: border-box; 
+  
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+
+  flex-direction: column; /* Alineación vertical */
+  justify-content: flex-start; /* Empezar desde arriba */
+  align-items: stretch; /* Que el contenido ocupe el ancho */
+  
+  width: 100%; /* Un poco de margen lateral */
+  margin: 0 auto;
+
+  text-align: left;
+  font-family: 'MedievalSharp', cursive;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1b1210;
+}
+
+.texto-animado {
+  /* Efecto de fade-in para cada letra que aparece */
+  animation: fadeInLetter 0.2s ease-in;
+}
+
+@keyframes fadeInLetter {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Estilo Bestiario */
+.tabla-monstruos {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-top: 15px;
+}
+
+.tabla-monstruos th {
+  background: rgba(62, 39, 35, 0.1);
+  border-bottom: 2px solid #3e2723;
+}
+
+.habilidad-row td {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #2c1f1b;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}

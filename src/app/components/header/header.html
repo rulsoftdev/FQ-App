@@ -1,0 +1,14 @@
+<header class="game-info">
+    <h1>{{ ds.misionActual()?.nombre || 'FetenQuest' }}</h1>
+    
+    <div class="danger-control">
+        <button (click)="cambiarPeligro(-1)" class="danger-btn">-</button>
+        
+        <div class="danger-display">
+        <span class="danger-label">NIVEL DE PELIGRO:</span>
+        <span class="danger-value">{{ ds.partida().nivelPeligroActual }}</span>
+        </div>
+        
+        <button (click)="cambiarPeligro(1)" class="danger-btn">+</button>
+    </div>
+</header>

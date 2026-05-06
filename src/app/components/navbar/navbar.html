@@ -1,0 +1,19 @@
+<nav class="nav-mini">
+  <div class="piedra-base">
+    <!-- Héroes -->
+    <button class="sello azul" 
+            [class.activo]="currentView === 'HEROES'"
+            (click)="changeView('HEROES')">
+      <span>H</span>
+    </button>
+
+    <span class="runa">ᚱ</span>
+
+    <!-- MB -->
+    <button class="sello rojo" 
+            [class.activo]="currentView === 'MB'"
+            (click)="changeView('MB')">
+      <span>MB</span>
+    </button>
+  </div>
+</nav>
