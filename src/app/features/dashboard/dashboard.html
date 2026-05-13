@@ -1,84 +1,62 @@
-<div class="dashboard-layout">
-  @if (this.mision(); as mision) {
-    <!-- ÁREA CENTRAL: El Visualizador de Cartas -->
-    <main class="card-viewer">
-      @if (faseTurnoHeroes() === 'ENCUENTRO'){
-        <div class="pergamino-mb-texture">
-          <div class="modal-header">
-            <h2>RESULTADO DE LA TIRADA: {{ tiradaEncuentro() }}</h2>
-          </div>
-          @if (tiradaEncuentro() <= 10) {
-            <p>Ha aumentado el Nivel de Peligro</p>
-          } @else {
-            <div class="pergamino-body">
-              <div class="pergamino-texto">
-                  <p>Monstruos: {{ encuentro()?.monstruos }}</p>
-                  <p>3 o 4 héroes: {{ encuentro()?.heroes3o4 }}</p>
-                  <p>2 héroes: {{ encuentro()?.heroes2 }}</p>
-                  <p>1 héroe: {{ encuentro()?.heroe1 }}</p>
-                  <p>Alternativas: {{ encuentro()?.alternativa }}</p>
-              </div>
-              @if (monstruosEncuentro().length > 0) {
-                <table class="tabla-monstruos">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Mv</th>
-                      <th>At</th>
-                      <th>Df</th>
-                      <th>PC</th>
-                      <th>PM</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (m of monstruosEncuentro(); track m.id) {
-                      <tr>
-                        <td>{{ m.nombre }}</td>
-                        <td>{{ m.mv }}</td>
-                        <td>{{ m.at }}</td>
-                        <td>{{ m.df }}</td>
-                        <td>{{ m.pc }}</td>
-                        <td>{{ m.pm }}</td>
-                      </tr>
-                      @if (m.especial) {
-                        <tr class="habilidad-row">
-                          <td colspan="6">✨ {{ m.especial }}</td>
-                        </tr>
-                      }
+@if (partidaGuardada()) {
+    <div class="mision-card-full save-card">
+        <div class="card-inner-content">
+        <h3 class="mision-titulo">Partida en Curso</h3>
+        <div class="mision-meta-row">
+            <span class="mision-autor">Misión: {{ partidaGuardada().mision.nombre }}</span>
+        </div>
+        
+        <div class="mision-actions">
+            <button (click)="recuperarPartida()" class="btn-ink">REANUDAR</button>
+            <button (click)="descartarGuardado()" class="btn-ink">DESCARTAR</button>
+        </div>
+        </div>
+    </div>
+}
+<div class="dashboard-campanyas">
+  <div class="campanyas-list">
+    @for (campanya of campanyas(); track campanya.nombre) {
+      <div class="campanya-item">
+        <!-- Cabecera de la campaña -->
+        <div class="campanya-header" (click)="toggleCampanya(campanya.nombre)">
+          <h2>{{ campanya.nombre }}</h2>
+          <span class="badge">{{ campanya.misiones.length }} misiones</span>
+          <i class="arrow" [class.open]="expanded() === campanya.nombre">▼</i>
+        </div>
+
+        <!-- Listado de misiones (Efecto Persiana) -->
+        @if (expanded() === campanya.nombre) {
+          <div class="misiones-drawer" [@slideInOut]>
+            @for (mision of campanya.misiones; track mision.id) {
+                <div class="mision-row-container" [class.selected]="misionSeleccionadaId() === mision.id">
+                    <div class="mision-row-minimal" (click)="prepararSeleccion(mision.id)">
+                        <span class="mision-nombre">{{ mision.nombre }}</span>
+                        <div class="mision-stars">
+                        @for (s of [1,2,3,4,5]; track s) {
+                            <span class="star" [class.filled]="s <= mision.dificultad">★</span>
+                        }
+                        </div>
+                    </div>
+                    <!-- Selector de Modo (Efecto "Sello de Tinta") -->
+                    @if (misionSeleccionadaId() === mision.id) {
+                        <div class="modo-selector-overlay" [@slideInOut]>
+                            <p>¿Cómo deseas jugar?</p>
+                            <div class="selector-buttons">
+                                <button class="btn-ink-small" (click)="confirmarMision(mision, 'TABLERO')">
+                                TABLERO
+                                </button>
+                                <button class="btn-ink-small" (click)="confirmarMision(mision, 'LOSETAS')" disabled>
+                                LOSETAS
+                                </button>
+                                <button class="btn-cancel" (click)="misionSeleccionadaId.set(null)">✕</button>
+                            </div>
+                        </div>
                     }
-                  </tbody>
-                </table>
-              } 
-            </div>
-          }
-        </div>
-      } @else if (faseTurnoHeroes() === 'INICIO_HEROES' && cartaActiva()) {
-        <div class="card-container animate-draw" 
-            [attr.data-mazo]="cartaActiva()?.idMazo"
-            [attr.data-id]="cartaActiva()?.id">
-          
-          <div class="card-frame">
-            <!-- Imagen de la carta -->
-            <img [src]="cartaActiva()?.imagen" [alt]="cartaActiva()?.nombre">
+                </div>
+            }
           </div>
-
-        </div>
-      } @else {
-        <!-- Pergamino de Lore de la Misión -->
-        <div class="lore-container">
-          <div class="lore-body">
-            <img src="/misiones/Graok.png">
-              <p class="mision-lore">{{ mision.lore }}</p>
-          </div>
-        </div>
-      }
-    </main>
-
-    <!-- BOTONERA: Bloques de Piedra Grabada -->
-    <footer>
-      <app-acciones></app-acciones>
-    </footer>
-    } @else {
-    <p>Error: No se ha podido encontrar la misión activa.</p>
-  }
+        }
+      </div>
+    }
+  </div>
 </div>

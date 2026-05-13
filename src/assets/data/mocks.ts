@@ -14,31 +14,35 @@ export const MOCK_MAZOS: Mazo[] = [
 // --- LIBRERÍA DE CARTAS ---
 export const MOCK_CARTAS: Carta[] = [
   // Salas
-  { id: 'C-SAL-01', nombre: 'Sala Normal con 1 Puerta', idMazo: 'M-SAL', imagen: 'salas/sala_normal_1P.png', tipo: 'Normal', oficial: true, juego: 'FetenQuest', numeroCopias: 8 },
-  { id: 'C-SAL-SP1', nombre: 'Sala Especial con 1 Puerta', idMazo: 'M-SAL', imagen: 'salas/sala_especial_1P.png', tipo: 'Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 3 },
+  { idCarta: 'C-SAL-01', nombre: 'Sala Normal con 1 Puerta', idMazo: 'M-SAL', imagen: 'salas/sala_normal_1P.png', tipo: 'Normal', oficial: true, juego: 'FetenQuest', numeroCopias: 8 },
+  { idCarta: 'C-SAL-SP1', nombre: 'Sala Especial con 1 Puerta', idMazo: 'M-SAL', imagen: 'salas/sala_especial_1P.png', tipo: 'Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 3 },
   // Atrezos (Incluyendo el Armario y Cofres)
-  { id: 'C-ATR-01', nombre: 'Armario', idMazo: 'M-ATR', imagen: 'atrezos/armario_1.png', tipo: 'Armario', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
-  { id: 'C-ATR-CF1', nombre: 'Cofre', idMazo: 'M-ATR', imagen: 'atrezos/cofre_1.png', tipo: 'Cofre', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
-  { id: 'C-ATR-SIN', nombre: 'Sin atrezo', idMazo: 'M-ATR', imagen: 'atrezos/sin_atrezo.png', tipo: 'Sin Atrezo', oficial: true, juego: 'FetenQuest', numeroCopias: 12 },
+  { idCarta: 'C-ATR-01', nombre: 'Armario', idMazo: 'M-ATR', imagen: 'atrezos/armario_1.png', tipo: 'Armario', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
+  { idCarta: 'C-ATR-CF1', nombre: 'Cofre', idMazo: 'M-ATR', imagen: 'atrezos/cofre_1.png', tipo: 'Cofre', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
+  { idCarta: 'C-ATR-SIN', nombre: 'Sin atrezo', idMazo: 'M-ATR', imagen: 'atrezos/sin_atrezo.png', tipo: 'Sin Atrezo', oficial: true, juego: 'FetenQuest', numeroCopias: 12 },
   
   // Pasillos (Para misiones de exterior/mazmorra)
-  { id: 'C-MAZ-P1', nombre: 'Pasillo', idMazo: 'M-MAZ', imagen: 'mazmorras/pasillo.png', tipo: 'Pasillo', oficial: true, juego: 'FetenQuest', numeroCopias: 2 },
+  { idCarta: 'C-MAZ-P1', nombre: 'Pasillo', idMazo: 'M-MAZ', imagen: 'mazmorras/pasillo.png', tipo: 'Pasillo', oficial: true, juego: 'FetenQuest', numeroCopias: 2 },
 
 // Pasillos (Para misiones de exterior/mazmorra)
-  { id: 'C-TRA-01', nombre: 'Trampa foso', idMazo: 'M-TRA', imagen: 'trampas/foso_1.png', tipo: 'Foso', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
+  { idCarta: 'C-TRA-01', nombre: 'Trampa foso', idMazo: 'M-TRA', imagen: 'trampas/foso_1.png', tipo: 'Foso', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
 
   // Salas Especiales
-  { id: 'C-ESP-01', nombre: 'Guarida Menor', idMazo: 'M-ESP', imagen: 'salasEspeciales/guarida_menor_1.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
-  { id: 'C-ESP-02', nombre: 'Circulo de Invocacion', idMazo: 'M-ESP', imagen: 'salasEspeciales/circulo_invocacion.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
-  { id: 'C-ESP-03', nombre: 'Cripta', idMazo: 'M-ESP', imagen: 'salasEspeciales/cripta_1.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
+  { idCarta: 'C-ESP-01', nombre: 'Guarida Menor', idMazo: 'M-ESP', imagen: 'salasEspeciales/guarida_menor_1.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
+  { idCarta: 'C-ESP-02', nombre: 'Circulo de Invocacion', idMazo: 'M-ESP', imagen: 'salasEspeciales/circulo_invocacion.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
+  { idCarta: 'C-ESP-03', nombre: 'Cripta', idMazo: 'M-ESP', imagen: 'salasEspeciales/cripta_1.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
   
 ];
 
 // --- PLANTILLA DE MISIÓN ---
 export const MOCK_MISION_AVENTURA: Mision = {
   id: 'MIS-001',
+  imagen: '/misiones/Graok.png',
+  campanya: 'Marrones a montones',
   nombre: 'El Resurgir del Nigromante',
+  autor: '@Rul',
   lore: 'Habéis encontrado la entrada a las catacumbas donde se oculta el antiguo mago...',
+  dificultad: 1,
   nivelPeligroInicial: 0,
   dadoTrampa: '1D10',
   tablaEncuentros: 'No-Muertos',
@@ -57,6 +61,7 @@ export const MOCK_MISION_AVENTURA: Mision = {
     atrezoSinAtrezo: 10,
     atrezoAzar: 9,
     atrezoCofre: 1, // Empezamos con 1 cofre
+    tiposSalasEsp: [],
     idsSalasEspeciales: ['C-ESP-01', 'C-ESP-02', 'C-ESP-03'],
     idsAtrezoFijos: [], // tipos obligatorios, pero aleatorio por ejemplo un armario, pero si no hay nada definido es al azar
     idsAtrezoExcluido: []
@@ -71,7 +76,8 @@ export const MOCK_PARTIDA_ACTIVA: PartidaEnCurso = {
   dadoTrampa: '1D1',
   exito: null,
   botin: '',
-  fechaGuardado: new Date()
+  fechaGuardado: new Date(),
+  hitosReclamados: []
 };
 
 export const MOCK_ESTADO_PARTIDA: EstadoMazoMision[] = [

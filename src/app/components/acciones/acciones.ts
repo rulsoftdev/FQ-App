@@ -1,7 +1,10 @@
-import { Component, computed, inject } from '@angular/core';
-import { DeckService, FaseTurno } from '../../core/services/deck';
-import { EncuentrosService } from '../../core/services/encuentros';
-import { TurnoMBService } from '../../core/services/turno-mb';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DeckService } from '../../core/services/deck.service';
+import { EncuentrosService } from '../../core/services/encuentros.service';
+import { TurnoMBService } from '../../core/services/turno-mb.service';
+import { Carta, FaseTurnoHeroes, VistaJuego } from '../../core/models/fetenquest.model';
+import { UiService } from '../../core/services/ui.service';
+import { MisionService } from '../../core/services/mision.service';
 
 @Component({
   selector: 'app-acciones',
@@ -11,14 +14,22 @@ import { TurnoMBService } from '../../core/services/turno-mb';
 })
 export class Acciones {
 
-  public deckService =  inject(DeckService)
-  public encuentrosService =  inject(EncuentrosService)
-  public turnoMBService = inject(TurnoMBService)
+  public misionService =  inject(MisionService);
+  public deckService =  inject(DeckService);
+  public encuentrosService =  inject(EncuentrosService);
+  public turnoMBService = inject(TurnoMBService);
+  public uiService = inject(UiService);
 
   public cartaActiva = this.deckService.cartaActiva;
-  public partida = this.deckService.partida;
-  public faseActual = this.deckService.faseActual;
-  public misionActual = this.deckService.misionActual;
+  public faseTurnoHeroe = this.deckService.faseTurnoHeroes;
+  public partida = this.misionService.partida;
+  public vistaActual = this.uiService.vistaActual;
+  public misionActual = this.misionService.misionActual;
+
+  // Variables de estado
+  cartasSeleccion: any[] = [];
+  mostrarSelectorSecreto: boolean = false;
+  indiceSeleccion: number = 0;
 
   /**
    * Contadores computados: 
@@ -26,7 +37,7 @@ export class Acciones {
    * Los usaremos mañana para los badges de los botones.
    */
   public contadores = computed(() => {
-    const estados = this.deckService.obtenerEstados(); // Método que devuelve el signal de estados
+    const estados = this.deckService.cartasEnPartida; // Método que devuelve el signal de estados
     
     return {
       salasRobo: estados().filter(c => c.idMazo === 'M-SAL' && c.pila === 'Robo').length,
@@ -46,20 +57,50 @@ export class Acciones {
     };
   });
   
+  abrirGestionMazo(idMazo: string) {
+    this.deckService.cargarMazoAGestionar(idMazo);
+    this.uiService.cambiaVista('VIEW_MAZO');
+  }
+
   /**
    * Método para robar una carta.
    * Llama al servicio y este actualiza el Signal 'cartaActiva'.
    */
   public robarCarta(idMazo: string): void {
     this.deckService.robarCarta(idMazo);
+    if(this.cartaActiva()?.idMazo === 'M-SAL' && this.cartaActiva()?.tipo === "Especial"){
+      this.misionService.actualizarNivelPeligro(1);
+    }
   }
 
-  public cambiarFase(fase: FaseTurno) {
-    this.deckService.cambiarFase(fase);
+  public cambiarATurnoHeroes(vista: VistaJuego, faseTurno: FaseTurnoHeroes) {
+    this.uiService.cambiaVista(vista);
+    this.deckService.cambiarFaseTurno(faseTurno);
+  }
+
+  public iniciarSalaSecreta() {
+    // Robamos 3 del mazo de Atrezzo usando tu DeckService
+    this.cartasSeleccion = this.deckService.drawMultiple('M-ATR', 3);
+    this.mostrarSelectorSecreto = true;
+  }
+
+  cambiarIndice(delta: number) {
+    this.indiceSeleccion += delta;
+  }
+
+  confirmarSeleccion(carta: Carta) {
+    this.deckService.seleccionarAtrezoSalaSecreta(carta);
+    this.cerrarSelector();
+  }
+
+  cerrarSelector() {
+    this.mostrarSelectorSecreto = false;
+    this.indiceSeleccion = 0;
+    this.cartasSeleccion = [];
   }
 
   public tiradaEncuentros(){
-    this.deckService.cambiarFaseTurnoMB('ENCUENTRO');
+    this.deckService.cambiarFaseTurno('ENCUENTRO');
     this.encuentrosService.tirarEncuentros(this.partida().nivelPeligroActual, null);
   }
 
@@ -73,7 +114,7 @@ export class Acciones {
       resultado = "🛡️ ESCUDO BLANCO: La suerte os es propicia, no ocurre nada.";
     } else {
       // Escudo Negro
-      this.deckService.actualizarNivelPeligro(1);
+      this.misionService.actualizarNivelPeligro(1);
       resultado = "🌑 ESCUDO NEGRO: El mal acecha... ¡El Nivel de Peligro aumenta en 1!";
     }
 
@@ -105,6 +146,15 @@ export class Acciones {
   }
 
   public tiradaEventos(){
-
+    const dado = Math.floor(Math.random() * 20) + 1;    
+    const evento = this.turnoMBService.obtenerEvento(dado);
+    if(dado === 4){
+      this.misionService.degradarDadoTrampa();
+    }
+    if(evento){
+      this.turnoMBService.cambiarFaseTurnoMB('MENSAJE');
+      this.turnoMBService.actualizarMensaje(dado, evento.texto);
+    }
   }
+
 }

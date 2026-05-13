@@ -1,24 +1,28 @@
 <!-- app.component.html -->
 <app-header></app-header>
 
-<app-navbar 
-  [currentView]="vistaActual()" 
-  (viewChanged)="cambiarVista($event)">
-</app-navbar>
+<app-navbar></app-navbar>
 
 <main class="game-viewport">
     @if (cargando()) {
-    <div class="pergamino-mb-texture">
-        <p class="texto-animado">Creando las salas, añadiendo las trampas y preparando encuentros...</p>
-    </div>
+        <div class="loading-container">
+            <p class="texto-animado">Creando las salas, añadiendo las trampas y preparando encuentros...</p>
+        </div>
     } @else {
-    @switch (vistaActual()) {
-        @case ('HEROES') {
-        <app-dashboard></app-dashboard>
+        @if (misionActual()) {
+            @switch (vistaActual()) {
+                @case ('VIEW_HEROES') {
+                    <app-mision></app-mision>
+                }
+                @case ('VIEW_MB') {
+                    <app-turno-mb></app-turno-mb>
+                }
+                @case ('VIEW_MAZO'){
+                    <app-mazo></app-mazo>
+                }
+            }
+        } @else {
+            <app-dashboard></app-dashboard>
         }
-        @case ('MB') {
-        <app-turno-mb></app-turno-mb>
-        }
-    }
     }
 </main>

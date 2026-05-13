@@ -1,29 +1,26 @@
 // --- Cabecera: El Pergamino Superior ---
 .game-info {
-  background: url('/textures/parchment_texture.png');
-  background-size: 620px; 
-  background-repeat: repeat;
-  border: 3px solid #b89b5e; // Oro viejo
-  border-radius: 8px;
-  padding: 15px;
+  background: url('/textures/fondo_head.png');
+  background-size: 100% 100%; 
+  background-repeat: no-repeat;
+  padding: 35px 20px;
   text-align: center;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 
   h1 {
-    font-family: 'Cinzel', serif;
+    font-family: 'FetenQuestTitles';
     color: #2c1e11; // Marrón oscuro para contraste con pergamino
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .danger-badge {
-    font-family: 'Cinzel', serif;
+    font-family: 'FetenQuestBody';
     color: #c0392b;
     font-weight: bold;
-    font-size: 1 rem;
+    font-size: 0.9 rem;
     margin-top: 5px;
     display: block;
   }
@@ -61,14 +58,14 @@
   }
 
   .danger-display {
-    font-family: 'Cinzel', serif;
+    font-family: 'FetenQuestBody', serif;
     font-weight: bold;
     color: #c0392b; // Rojo peligro
     font-size: 1rem;
     
     .danger-value {
       margin-left: 5px;
-      font-size: 1.1rem;
+      font-size: 1rem;
       text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
     }
   }

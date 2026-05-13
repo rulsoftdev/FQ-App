@@ -1,0 +1,23 @@
+<div class="mision-card-full">
+  <div class="card-inner-content">
+    
+    <h3 class="mision-titulo">{{ mision.nombre }}</h3>
+    
+    <div class="mision-meta-row">
+      <span class="mision-autor">{{ mision.autor }}</span>
+      <div class="dificultad-estrellas">
+        <span>Dificultad: </span>
+        @for (star of estrellas; track star) {
+          <span class="star" [class.filled]="star <= mision.dificultad">★</span>
+        }
+      </div>
+    </div>
+
+    <!-- Botones integrados en la parte inferior del diseño -->
+    <div class="mision-actions">
+        <button (click)="onSeleccionar('TABLERO')" class="btn-ink">TABLERO</button>
+        <button (click)="onSeleccionar('LOSETAS')" class="btn-ink" disabled>LOSETAS</button>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,127 @@
+.mazo-container {
+  padding: 15px;
+  color: #b89b5e;
+  font-family: 'FetenQuestBody', serif;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  box-sizing: border-box;
+
+  .mazo-header {
+    display: flex;
+    justify-content: center;
+    font-family: 'FetenQuestTitles';
+    border-bottom: 2px solid rgba(184, 155, 94, 0.3);
+    padding-bottom: 10px;
+
+    .stats {
+      display: flex;
+      gap: 30px;
+      .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.4rem;
+        font-family: 'FetenQuestTitles';
+        &.robo { color: #ffd700; }
+        &.descarte { color: #ff4444; }
+      }
+    }
+  }
+
+  .descarte-viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    h3 {
+      margin-bottom: 15px;
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+
+    .viewer-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .card-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .card-mini {
+        width: 240px; // Tamaño controlado para móvil
+        aspect-ratio: 2/3;
+        border: 3px solid #b89b5e;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+
+        .card-artwork {
+          width: 100%;
+          height: 100%;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; // Importante para no recortar la ilustración
+          }
+        }
+      }
+      .card-counter { 
+        margin-top: 12px; 
+        font-size: 0.9rem; 
+        color: #add8e6;
+        background: rgba(0,0,0,0.4);
+        padding: 2px 12px;
+        border-radius: 10px;
+      }
+    }
+
+    .nav-arrow {
+      background: none;
+      border: none;
+      color: #b89b5e;
+      font-size: 2.5rem;
+      cursor: pointer;
+      padding: 10px;
+      &:disabled { opacity: 0.1; }
+      &:active { color: #ffd700; }
+    }
+  }
+
+  .mazo-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; // Tres columnas ahora
+    gap: 10px;
+    margin-top: 20px;
+
+    .btn-stone {
+      background: url('/textures/dark_stone_texture.png'), #222;
+      background-size: cover;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 10px 5px;
+      color: #ffd700;
+      font-family: 'FetenQuestBody';
+      font-size: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+
+      i { font-size: 1.1rem; }
+      
+      &.btn-exit {
+        color: #ff9999;
+        border-color: #722;
+      }
+    }
+  }
+}

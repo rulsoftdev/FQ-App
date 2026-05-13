@@ -2,8 +2,12 @@
 export type JuegoBase = 'FetenQuest' | 'ChaoQuest' | 'Heroquest' | 'Otro';
 export type TipoPila = 'Robo' | 'Descarte' | 'Tablero' | 'Mano' | 'Fuera'; // Añadimos Tablero y Mano para la UI
 export type TipoMazo = 'Salas' | 'Atrezos' | 'Salas especiales' | 'Pasillos' | 'Mazmorras' | 'Trampas' | 'Eventos interiores' | 'Eventos exteriores';
-export type FaseTurnoHeroes = 'INICIO_HEROES' | 'ENCUENTRO';
+// Fases de la vista de los Heroes
+export type FaseTurnoHeroes = 'INICIO_HEROES' | 'SALA_ABIERTA' | 'ENCUENTRO';
+// Fases de la vista del MB
 export type FaseTurnoMB = 'INICIO_MB' | 'MENSAJE' | 'BESTIARIO';
+//Define la pantalla que está visible
+export type VistaJuego = 'VIEW_HEROES' | 'VIEW_MB' | 'VIEW_MAZO';
 
 export interface Mazo {
   id: string;
@@ -12,7 +16,7 @@ export interface Mazo {
 }
 
 export interface Carta {
-  id: string;
+  idCarta: string;
   nombre: string;
   idMazo: string;
   imagen: string;
@@ -20,7 +24,7 @@ export interface Carta {
   oficial: boolean;
   juego: JuegoBase;
   numeroCopias: number;
-  descripcion?: string; // Para el texto épico en el pergamino del Dashboard
+  descripcion?: string; // Para el texto épico en el pergamino del Mision
 }
 
 /**
@@ -40,8 +44,12 @@ export interface EstadoMazoMision {
 
 export interface Mision {
   id: string;
+  imagen: string;
+  campanya: string;
   nombre: string;
+  autor: string;
   lore: string;
+  dificultad: number; // 1 a 5
   nivelPeligroInicial: number;
   dadoTrampa: string; 
   tablaEncuentros: string;
@@ -59,7 +67,8 @@ export interface Mision {
     incluyeJefe: boolean;
     atrezoSinAtrezo: number;
     atrezoAzar: number;
-    atrezoCofre: number;  
+    atrezoCofre: number; 
+    tiposSalasEsp: string[]; 
     idsSalasEspeciales: string[]; 
     idsAtrezoFijos: string[]; 
     idsAtrezoExcluido: string[];
@@ -74,11 +83,13 @@ export interface PartidaEnCurso {
   botin: string;
   dadoTrampa: string;
   fechaGuardado: Date;
+  hitosReclamados: number[];
 }
 
 export interface Encuentro {
-  tipoEncuentro: string;
   resultado: string;
+  familia: string;
+  idsBestiario: string;
   monstruos: string;
   heroes3o4: String;
   heroes2: string;
@@ -88,8 +99,8 @@ export interface Encuentro {
 
 export interface Monstruo {
   id: string;
-  familia: string;
   categoria: number;
+  familia: string;
   nombre: string;
   rango: string;
   mv: string;
@@ -101,6 +112,11 @@ export interface Monstruo {
 }
 
 export interface MensajeTurnoMB {
+  resultadoDado: number;
+  texto: string;
+}
+
+export interface Evento {
   resultadoDado: number;
   texto: string;
 }

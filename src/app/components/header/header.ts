@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { DeckService } from '../../core/services/deck';
+import { DeckService } from '../../core/services/deck.service';
+import { MisionService } from '../../core/services/mision.service';
 
 @Component({
   selector: 'app-header',
@@ -8,9 +9,11 @@ import { DeckService } from '../../core/services/deck';
   styleUrl: './header.scss',
 })
 export class Header {
-  ds = inject(DeckService);
+  private misionService = inject(MisionService);
+  public misionActual = this.misionService.misionActual;
+  public partida = this.misionService.partida;
 
   public cambiarPeligro(delta: number) {
-    this.ds.actualizarNivelPeligro(delta);
+    this.misionService.actualizarNivelPeligro(delta);
   }
 }

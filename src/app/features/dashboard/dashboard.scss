@@ -1,178 +1,235 @@
-.dashboard-layout {
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  // Fondo principal con la textura de piedra muy oscura
-  background-repeat: repeat;
-  color: #e0e0e0;
-}
-
-// --- La Carta Central ---
-.card-viewer {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-
-  .card-container {
-    width: 100%;
-    //max-width: 320px;
-    filter: drop-shadow(0 0 20px rgba(184, 155, 94, 0.4)); // Brillo áureo sutil
-    
-    .card-frame {
-      border: 6px solid #444; // Borde de piedra
-      border-radius: 12px;
-      overflow: hidden;
-      padding: 8px; // Esto crea un pequeño borde oscuro alrededor de la imagen blanca
-      background-color: #1a1a1a;
-      
-      // La imagen de la carta
-      img {
-        width: 100%;
-        display: block;
-        border-bottom: 3px solid #b89b5e;
-      }
-
-      // El pie de la carta con textura de pergamino
-      .card-info {
-        background: url('/textures/parchment_texture.png');
-        padding: 15px;
-        color: #2c1e11;
-        
-        h3 {
-          font-family: 'Cinzel', serif;
-          margin: 0 0 8px 0;
-          font-size: 1.1rem;
-          border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        p {
-          font-family: 'MedievalSharp', cursive;
-          font-size: 0.95rem;
-          margin: 0;
-          line-height: 1.3;
-        }
-
-        // ESTA ES LA POSICIÓN CORRECTA
-        .card-description {
-          font-family: 'MedievalSharp', cursive;
-          font-size: 1rem;
-          line-height: 1.3;
-          margin: 0;
-          text-align: left; // O justify para que quede más formal
-        }
-      }
-    }
-  }
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background: url('/textures/parchment_texture.png');
-  width: 80%;
-  max-width: 400px;
-  padding: 30px;
-  text-align: center;
-  border: 4px solid #b89b5e;
-  box-shadow: 0 0 50px rgba(184, 155, 94, 0.3);
-  animation: modal-appear 0.3s ease-out;
-
-  .modal-header h2 {
-    font-family: 'Cinzel', serif;
-    color: #2c1e11;
-    border-bottom: 2px solid rgba(44, 30, 17, 0.2);
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-  }
-
-  .modal-body p {
-    font-family: 'MedievalSharp', cursive;
-    font-size: 1.2rem;
-    color: #2c1e11;
-    line-height: 1.4;
-  }
-}
-
-@keyframes modal-appear {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-.pergamino-mb-texture {
-  background-image: url('/textures/pergamino.png');
-  /* Cambiamos 'round' por '100% 100%' para que cubra todo el contenedor */
-  background-size: 100% 100%; 
+.mision-card-full {
+  width: 100%;
+  max-width: 380px;
+  min-height: 280px; // Ajusta según la proporción de tu imagen
+  margin: 15px auto;
+  
+  // Aplicamos tu nueva textura única
+  background-image: url('/textures/fondo_card.png');
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   
-  /* Dejamos que el contenido y el padding definan la altura */
-  padding-bottom: 60px;
-  padding-left: 25px;
-  padding-right: 25px;
-  padding-top: 35px;
-
-/* Importante para que el padding no sume al ancho total */
-  box-sizing: border-box; 
-  
-  min-height: auto;
   display: flex;
   flex-direction: column;
+  position: relative;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4));
+  transition: transform 0.2s ease;
 
-  flex-direction: column; /* Alineación vertical */
-  justify-content: flex-start; /* Empezar desde arriba */
-  align-items: stretch; /* Que el contenido ocupe el ancho */
-  
-  width: 100%; /* Un poco de margen lateral */
-  margin: 0 auto;
+  &:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
 
-  text-align: left;
-  font-family: 'MedievalSharp', cursive;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #1b1210;
+  .card-inner-content {
+    padding: 40px 45px 30px 45px; // Ajustar según el marco de fondo_card.png
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
 
-  .pergamino-texto{
-    font-size: 1rem;
-    font-weight: 600;
+    .mision-titulo {
+      font-family: 'FetenQuestTitles';
+      font-size: 1.3rem;
+      min-height: 50px;
+      margin: 15px 0 15px 0;
+      color: #1b1210;
+      text-align: center;
+      text-transform: uppercase;
+    }
 
-    p{
-      margin: 8px;
+    .mision-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(62, 39, 35, 0.15);
+
+      .mision-autor {
+        font-family: 'FetenQuestBody';
+        font-size: 0.85rem;
+        color: #3e2723;
+        font-weight: 700;
+      }
+
+      .dificultad-estrellas {
+        span{
+            font-size: 0.85rem;
+            font-family: 'FetenQuestBody';
+            font-style: italic;
+        }
+        .star {
+          color: #ccc;
+          font-size: 0.9rem;
+          &.filled { color: #d4af37; }
+        }
+      }
+    }
+
+    .mision-actions {
+        margin-top: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 10px 0;
+
+        .btn-ink {
+            // Fondo casi negro mate, como tinta seca
+            background: #1a1a1a;
+            
+            // Borde irregular (estilo sketch)
+            border: 2px solid #000;
+            border-radius: 2px;
+            
+            // Texto en blanco roto o gris muy claro para el efecto BN
+            color: #f0f0f0; 
+            
+            font-family: 'FetenQuestBody', serif;
+            font-size: 0.8rem;
+            padding: 10px 5px;
+            cursor: pointer;
+            
+            // Eliminamos sombras exteriores pesadas para que no "flote"
+            box-shadow: none;
+            
+            // Un toque de rugosidad
+            position: relative;
+            text-transform: uppercase;
+            transition: all 0.1s ease;
+
+            &:hover {
+            background: #333;
+            color: #fff;
+            // Simula que presionas el papel
+            transform: scale(0.98);
+            }
+
+            // Efecto decorativo: pequeñas muescas en las esquinas (opcional)
+            &::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
+            }
+        }
     }
   }
 }
 
-.lore-container {
-  img{
-    width: 100%;
+.campanya-item {
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid #bbbbbb;
+  border-radius: 4px;
+  overflow: hidden;
+
+  .campanya-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: linear-gradient(to right, #080808, #181717);
+    
+    h2 { 
+      margin: 0; 
+      font-family: 'FetenQuestTitles'; 
+      color: #faf6eb; 
+      font-size: 1.3rem; 
+      font-weight: 100;
+    }
+    
+    .badge { 
+      font-size: 0.7rem; color: #a89a8e; 
+      border: 1px solid #a89a8e; padding: 2px 6px; border-radius: 10px;
+    }
+    i{
+        color: #ebe8e8;
+    }
+  }
+
+  .misiones-drawer {
+    //background: url('/textures/fondo_card.png'); // Usamos tu textura de fondo
+    //background-size: cover;
+    border-top: 1px solid #ebe8e8;
+  }
+
+  .mision-row-minimal {
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(235, 229, 229, 0.863);
+    transition: background 0.2s;
+
+    &:hover { background: rgba(214, 211, 211, 0.219); }
+
+    .mision-nombre {
+      font-family: 'FetenQuestBody', cursive;
+      color: #d4af37;
+      font-size: 1rem;
+    }
+
+    .mision-stars {
+      .star { color: #ccc; font-size: 0.8rem; }
+      .star.filled { color: #d4af37; }
+    }
   }
 }
 
-/* Estilo Bestiario */
-.tabla-monstruos {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  margin-top: 15px;
+.mision-row-container {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+
+  &.selected {
+    background: rgba(255, 255, 255, 0.1); // Un ligero brillo para indicar selección
+  }
 }
 
-.tabla-monstruos th {
-  background: rgba(62, 39, 35, 0.1);
-  border-bottom: 2px solid #3e2723;
-}
+.modo-selector-overlay {
+  background: rgba(0, 0, 0, 0.05);
+  padding: 10px 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px dashed #3e2723;
 
-.habilidad-row td {
-  font-size: 0.8rem;
-  font-style: italic;
-  color: #2c1f1b;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  p {
+    margin: 0;
+    font-family: 'FetenQuestBody', cursive;
+    font-size: 0.8rem;
+    color: #f16148;
+    text-transform: uppercase;
+  }
+
+  .selector-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .btn-ink-small {
+      background: #1a1a1a;
+      border: 1px solid #000;
+      color: #f0f0f0;
+      font-family: 'FetenQuestBody', serif;
+      padding: 6px 15px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: transform 0.1s;
+
+      &:hover { background: #333; transform: scale(1.05); }
+    }
+
+    .btn-cancel {
+      background: none;
+      border: none;
+      color: #f16148;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 5px;
+      &:hover { color: #f00; }
+    }
+  }
 }

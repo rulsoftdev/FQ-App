@@ -1,0 +1,89 @@
+<div class="mision-layout">
+  @if (this.mision(); as mision) {
+    <!-- ÁREA CENTRAL: El Visualizador de Cartas -->
+    <main class="card-viewer">
+      @if (faseTurnoHeroes() === 'ENCUENTRO'){
+        <div class="encuentro-container">
+          <div class="encuentro-background">
+            <div class="modal-header">
+              <h2>RESULTADO DE LA TIRADA: {{ tiradaEncuentro() }}</h2>
+            </div>
+
+            @if (tiradaEncuentro() <= 10) {
+              <div class="peligro-aviso">
+                <p>Ha aumentado el Nivel de Peligro</p>
+              </div>
+            } @else {
+              <div class="pergamino-body">
+                <div class="resumen-encuentro">
+                    <p><strong>Monstruos:</strong> {{ encuentro()?.monstruos }}</p>
+                    <p><strong>3 o 4 héroes:</strong> {{ encuentro()?.heroes3o4 }}</p>
+                    <p><strong>2 héroes:</strong> {{ encuentro()?.heroes2 }}</p>
+                    <p><strong>1 héroe:</strong> {{ encuentro()?.heroe1 }}</p>
+                    <p><strong>Alternativas:</strong> {{ encuentro()?.alternativa }}</p>
+                </div>
+
+                @if (monstruosEncuentro().length > 0) {
+                  <table class="tabla-monstruos">
+                    <thead>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Mv</th>
+                        <th>At</th>
+                        <th>Df</th>
+                        <th>PC</th>
+                        <th>PM</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (m of monstruosEncuentro(); track m.id) {
+                        <tr>
+                          <td>{{ m.nombre }}</td>
+                          <td>{{ m.mv }}</td>
+                          <td>{{ m.at }}</td>
+                          <td>{{ m.df }}</td>
+                          <td>{{ m.pc }}</td>
+                          <td>{{ m.pm }}</td>
+                        </tr>
+                        @if (m.especial) {
+                          <tr class="habilidad-row">
+                            <td colspan="6">✨ {{ m.especial }}</td>
+                          </tr>
+                        }
+                      }
+                    </tbody>
+                  </table>
+                } 
+              </div>
+            }
+          </div>
+        </div>
+      } @else if ((faseTurnoHeroes() === 'INICIO_HEROES' || faseTurnoHeroes() === 'SALA_ABIERTA') 
+          && cartaActiva()) {
+        <div class="card-container animate-draw" 
+            [attr.data-mazo]="cartaActiva()?.idMazo"
+            [attr.data-id]="cartaActiva()?.idCarta">
+          
+          <div class="card-frame">
+            <!-- Imagen de la carta -->
+            <img [src]="cartaActiva()?.imagen" [alt]="cartaActiva()?.nombre">
+          </div>
+
+        </div>
+      } @else {
+        <!-- Pergamino de Lore de la Misión -->
+         <div class="lore-scroll-container">
+          <div class="lore-body">
+            <img [src]="mision.imagen" class="lore-img">
+            <p class="mision-lore">{{ mision.lore }}</p>
+          </div>
+        </div>
+      }
+    </main>
+
+    <!-- BOTONERA: Bloques de Piedra Grabada -->
+    <footer>
+      <app-acciones></app-acciones>
+    </footer>
+  }
+</div>

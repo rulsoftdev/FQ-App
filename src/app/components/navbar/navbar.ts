@@ -1,5 +1,8 @@
-import { Component, EventEmitter, inject,  Input, Output } from '@angular/core';
-import { DeckService } from '../../core/services/deck';
+import { Component, inject } from '@angular/core';
+import { VistaJuego } from '../../core/models/fetenquest.model';
+import { UiService } from '../../core/services/ui.service';
+import { TurnoMBService } from '../../core/services/turno-mb.service';
+import { MisionService } from '../../core/services/mision.service';
 
 @Component({
   selector: 'app-navbar',
@@ -8,12 +11,17 @@ import { DeckService } from '../../core/services/deck';
   styleUrl: './navbar.scss',
 })
 export class Navbar {
-  @Input() currentView: 'HEROES' | 'MB' = 'HEROES';
-  @Output() viewChanged = new EventEmitter<'HEROES' | 'MB'>();
-  private deckServive = inject(DeckService);
+  private uiService = inject(UiService);
+  private turnoMBService =  inject(TurnoMBService);
+  private misionService = inject(MisionService);
+  
+  public misionActual = this.misionService.misionActual;
+  public vistaActual = this.uiService.vistaActual;
 
-  changeView(view: 'HEROES' | 'MB') {
-    this.deckServive.cambiarFase(view);
-    this.viewChanged.emit(view);
+  cambiaVista(vista: VistaJuego) {
+    if (vista === 'VIEW_MB') {
+      this.turnoMBService.cambiarFaseTurnoMB('INICIO_MB');
+    }
+    this.uiService.cambiaVista(vista);
   }
 }

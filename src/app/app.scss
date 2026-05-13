@@ -1,25 +1,38 @@
-.pergamino-mb-texture {
-  background-image: url('/textures/pergamino.png'); /* O el degradado que hicimos antes */
-  background-size: 100%;
+.loading-container {
+  // Usamos la imagen completa de la carta
+  background-image: url('/textures/fondo_carta_FQ.png');
+  background-size: 100% 100%; 
+  background-repeat: no-repeat;
+  
+  // Dimensiones para que luzca como una carta centrada
+  width: 100%;
+  max-width: 400px;
   min-height: 500px;
-  padding: 30px;
+  margin: 20px auto; // Separación del header/navbar
+  
+  // Centrado del contenido
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: left;
-  font-family: 'MedievalSharp', cursive;
+  
+  // Padding para no pisar los bordes de piedra y cadenas
+  padding: 80px 50px;
+  box-sizing: border-box; 
+  
+  text-align: center;
+  font-family: 'FetenQuestBody';
   font-size: 1.4rem;
   font-weight: 600;
   color: #1b1210;
-  //box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
-}
 
-.texto-animado {
-  /* Efecto de fade-in para cada letra que aparece */
-  animation: fadeInLetter 0.2s ease-in;
+  .texto-animado {
+    /* Efecto de fade-in */
+    animation: fadeInLetter 1.5s ease-in-out infinite alternate;
+    line-height: 1.4;
+  }
 }
 
 @keyframes fadeInLetter {
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0.4; transform: scale(0.98); }
   to { opacity: 1; transform: scale(1); }
 }

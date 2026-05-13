@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "FQ-App": {
+    "FAI": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -60,10 +60,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "FQ-App:build:production"
+              "buildTarget": "FAI:build:production"
             },
             "development": {
-              "buildTarget": "FQ-App:build:development"
+              "buildTarget": "FAI:build:development"
             }
           },
           "defaultConfiguration": "development"

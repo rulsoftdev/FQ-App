@@ -6,24 +6,30 @@
       </div>
     }
     @if (faseActualMB() === 'MENSAJE') {
-      <div class="pergamino-mb-texture">
-          <div class="texto-animado">
-            <div class="modal-header">
-              <h2>RESULTADO DE LA TIRADA: {{ this.mensajeEscrito().resultadoDado }}</h2>
+    <div class="mensaje-container">
+        <div class="mensaje-background">
+            <div class="texto-animado">
+                <div class="modal-header">
+                    <h2>RESULTADO DE LA TIRADA: {{ this.mensajeEscrito().resultadoDado }}</h2>
+                </div>
+                <div class="modal-body">
+                    {{ this.mensajeEscrito().texto }}
+                </div>
             </div>
-            <div class="modal-body">
-              <p>{{ this.mensajeEscrito().texto }}</p>
-            </div>
-          </div>
-      </div>
+        </div>
+    </div>
     } @else if (faseActualMB() === 'BESTIARIO') {
-      <div class="pergamino-mb-texture">
-        <div class="bestiario-container">
+      <div class="bestiario">
+        <div class="familia-container">
           <select (change)="seleccionarTabla($event)">
-            <option value="pieles-verdes">Pieles Verdes</option>
-            <option value="no-muertos">No Muertos</option>
-            <option value="caos">Legiones del Caos</option>
+            <option value="Pieles Verdes" selected>Pieles Verdes</option>
+            <option value="No-muertos">No Muertos</option>
+            <option value="Caos y Demonios">Legiones del Caos</option>
+            <option value="Bestias">Bestias</option>
+            <option value="Forajidos">Forajidos</option>
           </select>
+        </div>
+        <div class="bestiario-container">
           <table class="tabla-monstruos">
             <thead>
               <tr>
@@ -45,11 +51,9 @@
                   <td>{{ m.pc }}</td>
                   <td>{{ m.pm }}</td>
                 </tr>
-                @if (m.especial) {
-                  <tr class="habilidad-row">
-                    <td colspan="6">✨ {{ m.especial }}</td>
-                  </tr>
-                }
+                <tr class="habilidad-row">
+                  <td colspan="6">{{ m.especial }}</td>
+                </tr>
               }
             </tbody>
           </table>
