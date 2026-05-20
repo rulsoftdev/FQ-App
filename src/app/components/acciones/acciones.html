@@ -25,84 +25,120 @@
     </div>
   </div>
 }
-<div class="controls-grid">
-  @if (vistaActual() === 'VIEW_MB') {
-    <button (click)="tiradaPeligro()">Tirada Peligro</button>
-    <button (click)="tiradaErrantes()">Errantes</button>
-    <button (click)="tiradaEventos()">Eventos</button>
-    <button (click)="verBestiario()">Bestiario</button>
+@if (vistaActual() === 'VIEW_MB') {
+    <div class="controls-grid">
+      <button (click)="tiradaPeligro()">Tirada Peligro</button>
+      <button (click)="tiradaErrantes()">Errantes</button>
+      <button (click)="tiradaEventos()">Eventos</button>
+      <button (click)="verBestiario()">Bestiario</button>
+    </div>
   } @else {
-    @if (faseTurnoHeroe() === 'INICIO_HEROES') {
-      <!-- Botón de Salas -->
-      <div class="split-btn-group">
-        <button (click)="robarCarta('M-SAL')" class="btn-main btn-salas">
-          <span class="btn-label">SALAS</span>
-          <div class="dec"></div>
-          <div class="deck-counters">
-            <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
-            <div class="counter-badge robo" title="Cartas en mazo">
-              <span class="count-value">{{ contadores().salasRobo }}</span>
-              /
-              <span class="count-value">{{ contadores().salasDescarte }}</span>
+  @if (faseTurnoHeroe() === 'INICIO_HEROES') {
+    <div class="controls-block">
+      <div class="contenedor-botonera">
+        <div class="fila-exploracion" [class.modo-tablero-fijo]="modoJuego() === 'TABLERO'">
+          
+          @if (modoJuego() === 'TABLERO') {
+            <div class="split-btn-group">
+              <button (click)="robarCarta('M-SAL')" class="btn-main btn-salas">
+                <span class="btn-label">SALAS</span>
+                <div class="dec"></div>
+                <div class="deck-counters">
+                  <div class="counter-badge robo" title="Cartas en mazo">
+                    <span class="count-value">{{ contadores().salasRobo }}</span>/
+                    <span class="count-value">{{ contadores().salasDescarte }}</span>
+                  </div>
+                </div>
+              </button>
+              <button (click)="abrirGestionMazo('M-SAL')" class="btn-manage btn-salas-dark">
+                <span class="material-symbols-outlined">playing_cards</span>
+              </button>
             </div>
-          </div>
-        </button>
   
-        <button (click)="abrirGestionMazo('M-SAL')" class="btn-manage btn-salas-dark">
-          <span class="material-symbols-outlined">playing_cards</span>
-        </button>
+            <div class="split-btn-group">
+              <button (click)="robarCarta('M-PAS')" class="btn-main btn-pasillos">
+                <span class="btn-label">PASILLOS</span>
+                <div class="deck-counters">
+                  <div class="counter-badge robo" title="Cartas en mazo">
+                    <span class="count-value">{{ contadores().pasillosRobo }}</span>/
+                    <span class="count-value">{{ contadores().pasillosDescarte }}</span>
+                  </div>
+                </div>
+              </button>
+              <button (click)="abrirGestionMazo('M-PAS')" class="btn-manage btn-salas-dark">
+                <span class="material-symbols-outlined">playing_cards</span>        
+              </button>
+            </div>
+          }
+  
+          @else if (modoJuego() === 'LOSETAS') {
+            @for (ruta of rutas(); track ruta.id) {
+              <div class="split-btn-group">
+                <button 
+                  (click)="explorarRuta(ruta.id)" 
+                  class="btn-main btn-mazmorra" 
+                  [disabled]="ruta.cartasIds.length === 0">
+                  <span class="btn-label">{{ ruta.nombre }}</span>
+                  <div class="dec"></div>
+                  <div class="deck-counters">
+                    <div class="counter-badge robo" title="Losetas restantes">
+                      <span class="count-value">{{ ruta.cartasIds.length }}</span>
+                    </div>
+                  </div>
+                </button>
+                <!--button (click)="explorarRuta(ruta.id)" class="btn-sucesos">
+                  <span class="btn-label">{{ ruta.nombre }}</span>
+                </button-->
+              </div>
+            }
+            <!--div class="split-btn-group">
+              <button (click)="abrirGestionMazo('M-MAZ')" class="btn-manage btn-salas-dark">
+                <span class="material-symbols-outlined">playing_cards</span>
+              </button>
+            </div-->
+          }
+  
+        </div>
+  
+        <div class="fila-peligros">
+          
+          <div class="split-btn-group">
+            <button (click)="robarCarta('M-TRA')" class="btn-main btn-trampas">
+              <div class="deck-counters">
+                <div class="counter-badge robo" title="Cartas en mazo">
+                  <span class="count-value">{{ contadores().trampasRobo }}</span>/
+                  <span class="count-value">{{ contadores().trampasDescarte }}</span>
+                </div>
+              </div>
+              <div class="dice-trampas">
+                <div class="trampas-badge caras" title="Dado de trampas">
+                  <span class="dice-value">{{ partida().dadoTrampa }}</span>
+                </div>
+              </div>
+              <span class="btn-label">TRAMPAS</span>
+            </button>
+            <button (click)="abrirGestionMazo('M-TRA')" class="btn-manage btn-salas-dark">
+              <span class="material-symbols-outlined">playing_cards</span>        
+            </button>
+          </div>  
+  
+          <button (click)="robarCarta('M-SUC')" class="btn-sucesos">
+            <span class="btn-label">SUCESOS</span>
+          </button>
+  
+        </div>
+  
       </div>
-        <!-- Botón de Pasillos -->
-      <div class="split-btn-group">
-        <button (click)="robarCarta('M-PAS')" class="btn-main btn-pasillos">
-          <span class="btn-label">PASILLOS</span>
-          <div class="deck-counters">
-            <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
-            <div class="counter-badge robo" title="Cartas en mazo">
-              <span class="count-value">{{ contadores().pasillosRobo }}</span>
-              /
-              <span class="count-value">{{ contadores().pasillosDescarte }}</span>
-            </div>
-          </div>
-        </button>
-        <button (click)="abrirGestionMazo('M-PAS')" class="btn-manage btn-salas-dark">
-          <span class="material-symbols-outlined">playing_cards</span>        
-        </button>
-      </div>
-      <!-- Botón de Trampas -->
-      <div class="split-btn-group">
-        <button (click)="robarCarta('M-TRA')" class="btn-main btn-trampas">
-          <div class="deck-counters">
-            <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
-            <div class="counter-badge robo" title="Cartas en mazo">
-              <span class="count-value">{{ contadores().trampasRobo }}</span>
-              /
-              <span class="count-value">{{ contadores().trampasDescarte }}</span>
-            </div>
-          </div>
-          <div class="dice-trampas">
-            <!-- Cartas restantes en el mazo de robo (Icono de mazo) -->
-            <div class="trampas-badge caras" title="Dado de trampas">
-              <span class="dice-value">{{ partida().dadoTrampa }}</span>
-            </div>
-          </div>
-          <span class="btn-label">TRAMPAS</span>
-        </button>
-        <button (click)="abrirGestionMazo('M-TRA')" class="btn-manage btn-salas-dark">
-          <span class="material-symbols-outlined">playing_cards</span>        
-        </button>
-      </div>  
-      <button (click)="robarCarta('M-SUC')" class="btn-sucesos">
-        <span class="btn-label">SUCESOS</span>
-      </button>
-    }
-    <!-- FASE SALA ABIERTA: Opciones dentro de la estancia -->
-    @if (faseTurnoHeroe() === 'SALA_ABIERTA' || 
-      faseTurnoHeroe() === 'ENCUENTRO') {
-      <!-- Botón de Salas -->
-      <!--button (click)="cambiarFase('INICIO')" class="btn-deck">
-            <span class="btn-label">VOLVER</span>    
-          </button-->
+    </div>
+  }
+  <!-- FASE SALA ABIERTA: Opciones dentro de la estancia -->
+  @if (faseTurnoHeroe() === 'SALA_ABIERTA' || 
+    faseTurnoHeroe() === 'ENCUENTRO') {
+    <!-- Botón de Salas -->
+    <!--button (click)="cambiarFase('INICIO')" class="btn-deck">
+          <span class="btn-label">VOLVER</span>    
+        </button-->
+    <div class="controls-grid">
       <div class="split-btn-group">
         <button (click)="robarCarta('M-ATR')" class="btn-main btn-atrezo">
           <span class="btn-label">ATREZOS</span>
@@ -149,6 +185,6 @@
       <button (click)="cambiarATurnoHeroes('VIEW_HEROES', 'INICIO_HEROES')" class="btn-sucesos">
         <span class="btn-label">SALIR</span>
       </button>
-    } 
-  }
-</div>
+    </div>
+  } 
+}

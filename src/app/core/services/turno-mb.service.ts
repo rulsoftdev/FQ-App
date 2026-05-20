@@ -76,10 +76,11 @@ export class TurnoMBService {
     return this.bestiario().filter(b => b.familia === familia);
   }
 
-  public obtenerEvento(resultadoDado: number): Evento | null{
+  public obtenerEvento(resultadoDado: number, tipo: string): Evento | null{
     console.log(resultadoDado);
     console.log("EVENTOS", this._eventosInt());
-    const eventoEncontrado =  this.eventosInt().find(e => e.resultadoDado === resultadoDado);
+    const eventoEncontrado =  this.eventosInt().find(e => e.resultadoDado === resultadoDado && e.tipo === tipo);
+    console.log(eventoEncontrado);
     return eventoEncontrado ?? null;
   }
 
@@ -103,6 +104,7 @@ export class TurnoMBService {
     const filas = parseFullCsv(csv);
     return filas.map(f => ({
       resultadoDado: f.resultado,
+      tipo: f.tipo,
       texto: f.evento
     }))
   }

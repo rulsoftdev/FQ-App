@@ -12,7 +12,7 @@ export const MOCK_MAZOS: Mazo[] = [
 ];
 
 // --- LIBRERÍA DE CARTAS ---
-export const MOCK_CARTAS: Carta[] = [
+/*export const MOCK_CARTAS: Carta[] = [
   // Salas
   { idCarta: 'C-SAL-01', nombre: 'Sala Normal con 1 Puerta', idMazo: 'M-SAL', imagen: 'salas/sala_normal_1P.png', tipo: 'Normal', oficial: true, juego: 'FetenQuest', numeroCopias: 8 },
   { idCarta: 'C-SAL-SP1', nombre: 'Sala Especial con 1 Puerta', idMazo: 'M-SAL', imagen: 'salas/sala_especial_1P.png', tipo: 'Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 3 },
@@ -32,7 +32,7 @@ export const MOCK_CARTAS: Carta[] = [
   { idCarta: 'C-ESP-02', nombre: 'Circulo de Invocacion', idMazo: 'M-ESP', imagen: 'salasEspeciales/circulo_invocacion.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
   { idCarta: 'C-ESP-03', nombre: 'Cripta', idMazo: 'M-ESP', imagen: 'salasEspeciales/cripta_1.png', tipo: 'Sala Especial', oficial: true, juego: 'FetenQuest', numeroCopias: 1 },
   
-];
+];*/
 
 // --- PLANTILLA DE MISIÓN ---
 export const MOCK_MISION_AVENTURA: Mision = {
@@ -57,14 +57,16 @@ export const MOCK_MISION_AVENTURA: Mision = {
     mazmorraSalasNormales: 6,
     mazmorraSalasEspeciales: 2,
     mazmorraPasillos: 3,
+    incluyeEscalera: false,
+    incluyeSalaObjetivo: true,
     incluyeJefe: true,
     atrezoSinAtrezo: 10,
     atrezoAzar: 9,
     atrezoCofre: 1, // Empezamos con 1 cofre
+    tiposAtrezoFijos: [], // tipos obligatorios, pero aleatorio por ejemplo un armario, pero si no hay nada definido es al azar
+    tiposAtrezoExcluido: [],
     tiposSalasEsp: [],
     idsSalasEspeciales: ['C-ESP-01', 'C-ESP-02', 'C-ESP-03'],
-    idsAtrezoFijos: [], // tipos obligatorios, pero aleatorio por ejemplo un armario, pero si no hay nada definido es al azar
-    idsAtrezoExcluido: []
   }
 };
 

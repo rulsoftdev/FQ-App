@@ -126,25 +126,39 @@
   .campanya-header {
     padding: 15px 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; // Mantiene el título a la izquierda y la flecha a la derecha
     align-items: center;
     cursor: pointer;
     background: linear-gradient(to right, #080808, #181717);
-    
+
+    .titulo-grupo {
+      display: flex;
+      flex-direction: column; // Apila título y badge
+      align-items: flex-start; // Alinea ambos a la izquierda
+      gap: 7px; // Espacio pequeño entre el título y el badge
+    }
+
     h2 { 
       margin: 0; 
       font-family: 'FetenQuestTitles'; 
       color: #faf6eb; 
       font-size: 1.3rem; 
       font-weight: 100;
+      line-height: 1.1; // Ajustamos para que no quede demasiado separado del badge
     }
-    
+
     .badge { 
-      font-size: 0.7rem; color: #a89a8e; 
-      border: 1px solid #a89a8e; padding: 2px 6px; border-radius: 10px;
+      font-size: 0.7rem; // Un pelín más pequeño para que no compita con el título
+      color: #a89a8e; 
+      border: 1px solid #a89a8e; 
+      padding: 1px 6px; 
+      border-radius: 10px;
+      display: inline-block; // Asegura que el borde se ajuste al texto
     }
-    i{
-        color: #ebe8e8;
+
+    i {
+      color: #ebe8e8;
+      font-size: 0.8rem;
     }
   }
 

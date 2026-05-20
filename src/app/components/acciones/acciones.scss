@@ -18,6 +18,10 @@
     box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1), 4px 4px 10px rgba(0,0,0,0.5);
     transition: all 0.2s;
 
+    &:disabled {
+      color: #92918f !important;
+    }
+
     &:active {
       transform: translateY(2px);
       box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8);
@@ -198,7 +202,7 @@
 .viewer-container {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 5px;
   user-select: none;
 }
 
@@ -263,4 +267,118 @@
   font-family: 'FetenQuestBody';
   font-size: 0.8rem;
   letter-spacing: 2px;
+}
+
+//////////////////////////////////////////////////////////
+// === SISTEMA DE CUADRÍCULA NATIVA DE PIEDRA === //
+//////////////////////////////////////////////////////////
+.controls-block {
+  display: block;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
+    button {
+    background: url('/textures/dark_stone_texture.png');
+    background-size: 200px;
+    border: 2px solid #555;
+    border-radius: 6px;
+    padding: 15px;
+    color: #b89b5e;
+    font-family: 'FetenQuestBody';
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1), 4px 4px 10px rgba(0,0,0,0.5);
+    transition: all 0.2s;
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow: inset 4px 4px 10px rgba(0,0,0,0.8);
+    }
+
+    &:hover {
+      border-color: #b89b5e;
+      color: #ffd700;
+    }
+    
+    // Colores específicos por mazo
+    //&.btn-salas { border-left: 5px solid #3498db; }
+    //&.btn-trampas { border-left: 5px solid #e74c3c; }
+  }
+}
+
+// Contenedor principal sin flexbox extraño para no romper tu layout
+.contenedor-botonera {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 10px;
+  
+  // Separación vertical real entre bloques usando márgenes limpios
+  .fila-exploracion {
+    margin-bottom: 20px; 
+  }
+}
+
+// Clonamos el comportamiento de tu .controls-grid original pero para elementos genéricos
+.fila-exploracion, 
+.fila-peligros {
+  display: grid;
+  gap: 15px; // Tu espacio de piedra original
+  width: 100%;
+  box-sizing: border-box;
+
+  // Por defecto en TABLERO o LOSETAS con 2 elementos: Mitad y Mitad perfectos
+  grid-template-columns: 1fr 1fr; 
+
+  // Si estás en modo LOSETAS y solo hay 1 botón (ocupa todo el ancho de la línea)
+  &:not(.modo-tablero-fijo):has(.split-btn-group:nth-child(1):last-child) {
+    grid-template-columns: 1fr;
+  }
+
+  // Si la mazmorra se abre en el máximo de 3 caminos paralelos
+  &:has(.split-btn-group:nth-child(3)) {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; // Un pelín más juntos si son tres para que no desborde el pergamino
+  }
+}
+
+// === CORRECCIÓN MILIMÉTRICA DE TU SPLIT BUTTON ===
+.split-btn-group {
+  //display: flex !important;
+  width: 100% !important;
+  margin: 0 !important; // Liquidamos cualquier margen que arrastre el botón a la izquierda
+  align-items: stretch;
+
+  .btn-main {
+    flex: 1 1 0px !important; // El botón grande absorbe todo el espacio restante de forma elástica
+    //border-radius: 8px 0 0 8px !important;
+    min-width: 0 !important;
+  }
+
+  .btn-manage {
+    flex: 0 0 44px !important; // El botón pequeño se queda clavado y estático a la derecha
+    border-radius: 0 8px 8px 0 !important;
+    min-width: 44px !important;
+  }
+
+  // Aseguramos que tus propiedades de piedra se mantengan rígidas en altura
+  .btn-main, .btn-manage {
+    height: 52px !important; // Forzamos altura idéntica para clavar las líneas
+    box-sizing: border-box !important;
+    padding: 10px 4px !important; // Un poco más de aire interno para que quepa bien el texto
+  }
+}
+
+// === BOTÓN DE SUCESOS INDEPENDIENTE ===
+.btn-sucesos {
+  width: 100% !important;
+  margin: 0 !important;
+  height: 52px !important; // Emparejado al milímetro con Trampas
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.btn-mazmorra{
+  border-radius: 8px !important;
 }

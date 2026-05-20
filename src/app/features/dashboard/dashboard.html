@@ -19,9 +19,12 @@
       <div class="campanya-item">
         <!-- Cabecera de la campaña -->
         <div class="campanya-header" (click)="toggleCampanya(campanya.nombre)">
-          <h2>{{ campanya.nombre }}</h2>
-          <span class="badge">{{ campanya.misiones.length }} misiones</span>
-          <i class="arrow" [class.open]="expanded() === campanya.nombre">▼</i>
+        <div class="titulo-grupo">
+            <h2>{{ campanya.nombre }}</h2>
+            <span class="badge">{{ campanya.misiones.length }} misiones</span>
+        </div>
+        
+        <i class="arrow" [class.open]="expanded() === campanya.nombre">▼</i>
         </div>
 
         <!-- Listado de misiones (Efecto Persiana) -->
@@ -45,7 +48,7 @@
                                 <button class="btn-ink-small" (click)="confirmarMision(mision, 'TABLERO')">
                                 TABLERO
                                 </button>
-                                <button class="btn-ink-small" (click)="confirmarMision(mision, 'LOSETAS')" disabled>
+                                <button class="btn-ink-small" (click)="confirmarMision(mision, 'LOSETAS')">
                                 LOSETAS
                                 </button>
                                 <button class="btn-cancel" (click)="misionSeleccionadaId.set(null)">✕</button>

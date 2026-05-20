@@ -64,14 +64,16 @@ export interface Mision {
     mazmorraSalasNormales: number;
     mazmorraSalasEspeciales: number;
     mazmorraPasillos: number; 
+    incluyeEscalera: boolean;
+    incluyeSalaObjetivo: boolean;
     incluyeJefe: boolean;
     atrezoSinAtrezo: number;
     atrezoAzar: number;
     atrezoCofre: number; 
+    tiposAtrezoFijos: string[]; 
+    tiposAtrezoExcluido: string[];
     tiposSalasEsp: string[]; 
     idsSalasEspeciales: string[]; 
-    idsAtrezoFijos: string[]; 
-    idsAtrezoExcluido: string[];
   };
 }
 
@@ -118,5 +120,6 @@ export interface MensajeTurnoMB {
 
 export interface Evento {
   resultadoDado: number;
+  tipo: string;
   texto: string;
 }

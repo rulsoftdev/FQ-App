@@ -94,7 +94,7 @@ export class DeckService {
     mazoFinal.push(...sinAtrezoSeleccionados);
 
     // 3. OBLIGATORIOS (Ej: "2-Libreria")
-    mision.configuracion!.idsAtrezoFijos.forEach(item => {
+    mision.configuracion!.tiposAtrezoFijos.forEach(item => {
       const [cantStr, tipoBusqueda] = item.includes('-') ? item.split('-') : ['1', item];
       const cantidad = Number(cantStr) || 1;
 
@@ -112,7 +112,7 @@ export class DeckService {
     });
 
     // 4. ATREZOS AL AZAR (Rellenar con lo restante)
-    const tiposExcluidos = mision.configuracion!.idsAtrezoExcluido;
+    const tiposExcluidos = mision.configuracion!.tiposAtrezoExcluido;
     
     const poolCandidatos = todasAtrezo.filter(c => 
       c.tipo !== 'Cofre' && 
@@ -282,6 +282,74 @@ export class DeckService {
     });
   }
 
+  public generarMazoLosetas(mision: Mision) {
+    // 1. Extraemos TODAS las cartas que pertenecen al mazo de Mazmorra
+    const todasCartasMazmorra = this.biblioteca().filter(c => c.idMazo === 'M-MAZ');
+
+    let bloqueCartasMision: EstadoMazoMision[] = [];
+
+    // --- PASO A: Añadir Salas Normales al azar ---
+    const salasNormales = todasCartasMazmorra.filter(c => c.tipo === 'Normal');
+    const normalesCantidad = mision.configuracion!.mazmorraSalasNormales || 0;
+    const normalesSeleccionadas = this.barajar(this.crearEstadoMazo(salasNormales)).slice(0, normalesCantidad);
+    bloqueCartasMision.push(...normalesSeleccionadas);
+
+    // --- PASO B: Añadir Pasillos de Mazmorra ---
+    const pasillos = todasCartasMazmorra.filter(c => c.tipo === 'Pasillo');
+    const pasillosCantidad = mision.configuracion!.mazmorraPasillos || 0;
+    const pasillosSeleccionados = this.barajar(this.crearEstadoMazo(pasillos)).slice(0, pasillosCantidad);
+    bloqueCartasMision.push(...pasillosSeleccionados);
+
+    // --- PASO C: Añadir la Escalera ---
+    const escaleras = todasCartasMazmorra.filter(c => c.tipo === 'Escalera');
+    if (escaleras.length > 0 && mision.configuracion!.incluyeEscalera) {
+      // Normalmente habrá una escalera por misión, la barajamos por si hay variantes
+      const escaleraSeleccionada = this.barajar(this.crearEstadoMazo(escaleras)).slice(0, 1);
+      bloqueCartasMision.push(...escaleraSeleccionada);
+    }
+
+    // --- PASO D: Añadir Salas Especiales ---
+    const salasEspeciales = todasCartasMazmorra.filter(c => c.tipo === 'Especial');
+    const salasEspecialesCantidad = mision.configuracion!.mazmorraSalasEspeciales || 0;
+    const salasEspecialesSeleccionadas = this.barajar(this.crearEstadoMazo(salasEspeciales)).slice(0, salasEspecialesCantidad);
+    bloqueCartasMision.push(...salasEspecialesSeleccionadas);
+    
+    // --- PASO E: Mezclar el bloque base completo ---
+    let mazoMezcladoCompleto = this.barajar(bloqueCartasMision);
+
+    if(mision.configuracion!.incluyeSalaObjetivo){
+      // --- PASO F: El clímax del mazo (Sala Objetivo + 3 acompañantes al fondo) ---
+      const salasObjetivo = todasCartasMazmorra.filter(c => c.tipo === 'Objetivo');
+      
+      if (mazoMezcladoCompleto.length >= 3) {
+        // Extraemos 2 del mazo ya mezclado
+        const dosCartasParaElFinal = mazoMezcladoCompleto.splice(0, 3);
+  
+        // Creamos el trío del fondo y lo barajamos
+        const comboFinalMezclado = this.barajar([...dosCartasParaElFinal, ...this.crearEstadoMazo(salasObjetivo)]);
+  
+        // Lo inyectamos al final del mazo
+        mazoMezcladoCompleto = [...mazoMezcladoCompleto, ...comboFinalMezclado];
+      } else {
+        console.error("Error crítico: No se pudo preparar el fondo del mazo. Revisa que existan cartas de tipo 'Objetivo' o que el mazo base tenga losetas suficientes.");
+      }
+    }
+
+    // --- PASO G: Mapeo de posiciones e inserción en el Signal global de partida ---
+    const mazoFinalListo: EstadoMazoMision[] = mazoMezcladoCompleto.map((carta, index) => ({
+      ...carta,
+      posicion: index + 1,
+      pila: 'Robo',
+      idMazo: 'M-MAZ' // Forzamos que se mantenga el ID del mazo unificado
+    }));
+
+    this._cartasEnPartida.update(cartasActuales => {
+      // Purgamos cartas antiguas de mazmorras si las hubiera
+      const otrasCartas = cartasActuales.filter(c => c.idMazo !== 'M-MAZ');
+      return [...otrasCartas, ...mazoFinalListo];
+    });
+  }
+
   /**
    * Devuelve el signal de cartasEnPartida
     (útil para los computed del componente)
@@ -313,7 +381,7 @@ export class DeckService {
       .sort((a, b) => a.posicion - b.posicion);
 
     // 3. Gestión de Fases
-    this.actualizarFaseSegunMazo(idMazo, cartasDisponibles.length);
+    this.actualizarFaseSegunMazo(idMazo, cartasDisponibles.length, '');
 
     // 4. Lógica de reciclaje si no hay cartas
     if (cartasDisponibles.length === 0) {
@@ -343,6 +411,21 @@ export class DeckService {
       // 6. Caso: Mazo totalmente agotado
       this.mostrarMazoAgotado(idMazo, mazos);
     }
+  }
+
+  public robarCartaMazmorra(cartaEstado: EstadoMazoMision | null, idMazo: string) {
+    if(cartaEstado){
+      const infoCarta = this.biblioteca().find(c => c.idCarta === cartaEstado.idCarta);
+
+      if (infoCarta) {
+        this.procesarMovimientoPila(cartaEstado);
+        this._cartaActiva.set(infoCarta);
+        this.actualizarFaseSegunMazo(idMazo, 0, infoCarta.tipo!);
+      }
+    } else {
+      const mazos = this.mazosCargados();
+      this.mostrarMazoAgotado(idMazo, mazos);
+    }
 
   }
 
@@ -358,10 +441,11 @@ export class DeckService {
   /**
    * Métodos de apoyo para mantener el código limpio y eficiente
    */
-  private actualizarFaseSegunMazo(idMazo: string, cantidad: number) {
-    if (idMazo === 'M-SAL' && cantidad > 0 || idMazo === 'M-ATR' || idMazo === 'M-ESP') {
+  private actualizarFaseSegunMazo(idMazo: string, cantidad: number, tipo: string) {
+    if (idMazo === 'M-SAL' && cantidad > 0 || idMazo === 'M-ATR' || idMazo === 'M-ESP' 
+      || (idMazo === 'M-MAZ' && tipo.toLowerCase() !== 'pasillo')){
       this.faseTurnoHeroes.set('SALA_ABIERTA');
-    } else if (['M-TRP', 'M-MAZ', 'M-EVE', 'M-EVI'].includes(idMazo)) {
+    } else if (['M-TRP', 'M-EVE', 'M-EVI'].includes(idMazo)) {
       this.faseTurnoHeroes.set('INICIO_HEROES');
     }
   }
@@ -483,7 +567,8 @@ export class DeckService {
    * Genera un ID único para cada "instancia" física de la carta.
    */
   private mapearACartaEstado(carta: Carta): EstadoMazoMision {
-    return {
+
+    const estadoMazoMision: EstadoMazoMision = {
       // ID único de esta instancia (para que no colisionen cartas iguales)
       id: crypto.randomUUID(), 
       idPartida: crypto.randomUUID(), 
@@ -498,6 +583,7 @@ export class DeckService {
       pila: 'Robo',
       reciclable: ['M-TRA', 'M-EVI', 'M-EVE', 'M-PAS', 'M-SUC'].includes(carta.idMazo)
     };
+    return estadoMazoMision;
   }
 
   /**
@@ -527,7 +613,6 @@ export class DeckService {
     return filas.map(fila => {
       return { 
         // Accedemos por el nombre exacto de la cabecera en tu Excel
-        id: crypto.randomUUID(), 
         idCarta: fila.idCarta, 
         nombre: fila.nombre, 
         idMazo: fila.idMazo, 
@@ -624,6 +709,7 @@ export class DeckService {
           ? { ...est, pila: 'Descarte' as TipoPila } // <-- La clave está aquí
           : est
       );
+      console.log(listaConDescarte);
 
       // 2. Filtramos lo que queda en el mazo de Robo de Atrezzo
       const poolRobo = listaConDescarte.filter(c => 

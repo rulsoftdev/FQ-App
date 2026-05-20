@@ -89,7 +89,7 @@ export class MisionService {
       this.deckService.generarMazoSalas(mision);
   
       // --- PASO 4: MAZMORRAS (OPCIONAL/RESTO) ---
-      this.deckService.generarMazo('M-MAZ');
+      this.deckService.generarMazoLosetas(mision);
   
       // --- PASO 5: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
        this.deckService.generarMazoSalasEspeciales(mision);
@@ -191,20 +191,21 @@ export class MisionService {
         salaObjetivo: fila.salaObjetivo,
         finMision: fila.finMision,
         configuracion: {
-          salasNormales: Number(fila.conf_salasNorm) || 0,
-          salasEspeciales: Number(fila.conf_salasEsp) || 0,
-          mazmorraSalasNormales: Number(fila.conf_mazNorm) || 0,
-          mazmorraSalasEspeciales: Number(fila.conf_mazEsp) || 0,
-          mazmorraPasillos: Number(fila.conf_mazPas) || 0,
-          incluyeJefe: String(fila.conf_jefe).toUpperCase() === 'TRUE',
-          atrezoSinAtrezo: Number(fila.conf_sinAtrezo) || 0,
-          atrezoAzar: Number(fila.conf_azarAtrezo) || 0,
+          salasNormales: Number(fila.conf_salas_normales) || 0,
+          salasEspeciales: Number(fila.conf_salas_especiales) || 0,
+          mazmorraSalasNormales: Number(fila.conf_mazmorra_normales) || 0,
+          mazmorraSalasEspeciales: Number(fila.conf_mazmorra_especiales) || 0,
+          mazmorraPasillos: Number(fila.conf_mazmorra_pasillos) || 0,
+          incluyeEscalera: String(fila.conf_incluye_escalera).toUpperCase() === 'TRUE',
+          incluyeSalaObjetivo: String(fila.conf_incluye_sala_objetivo).toUpperCase() === 'TRUE',
+          incluyeJefe: String(fila.conf_incluye_jefe).toUpperCase() === 'TRUE',
+          atrezoSinAtrezo: Number(fila.conf_sin_atrezo) || 0,
+          atrezoAzar: Number(fila.conf_atrezo_azar) || 0,
           atrezoCofre: Number(fila.conf_cofres) || 0,
-          // Limpiamos los IDs que vienen separados por coma o punto y coma
-          tiposSalasEsp: this.splitMultipleIds(fila.conf_tiposSalasEsp),
-          idsSalasEspeciales: this.splitMultipleIds(fila.conf_idsSalasEsp),
-          idsAtrezoFijos: this.splitMultipleIds(fila.conf_idsAtrezoFijos),
-          idsAtrezoExcluido: this.splitMultipleIds(fila.conf_idsAtrezoExcluido)
+          tiposAtrezoFijos: this.splitMultipleIds(fila.conf_tipos_atrezos_fijo),
+          tiposAtrezoExcluido: this.splitMultipleIds(fila.conf_tipos_atrezo_excluido),
+          tiposSalasEsp: this.splitMultipleIds(fila.conf_tipos_salas_especiales),
+          idsSalasEspeciales: this.splitMultipleIds(fila.conf_ids_salas_especiales)
         }
       };
       return mision;
