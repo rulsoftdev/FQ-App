@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DeckService } from '../../core/services/deck.service';
 import { EncuentrosService } from '../../core/services/encuentros.service';
 import { TurnoMBService } from '../../core/services/turno-mb.service';
-import { Carta, FaseTurnoHeroes, VistaJuego } from '../../core/models/fetenquest.model';
+import { Carta, FaseTurnoHeroes, VistaJuego } from '../../core/models/fetenquest.interface';
 import { UiService } from '../../core/services/ui.service';
 import { MisionService } from '../../core/services/mision.service';
 
@@ -36,9 +36,7 @@ export class Acciones {
   modoJuego = this.uiService.modoJuego; // 'TABLERO' o 'LOSETAS' (asumo que 'TABLERO' equivale a tus "mazmorras fijas actuales")
 
   // Estado de las rutas dinámicas para el modo LOSETA
-  rutas = signal<RutaExploracion[]>([
-    { id: 1, nombre: 'MAZMORRA', cartasIds: [] } // Empezamos con un único botón
-  ]);
+  public rutas = computed(() => this.partida()?.rutasLosetas || []);
 
   // Variables de estado
   cartasSeleccion: any[] = [];
@@ -47,7 +45,7 @@ export class Acciones {
 
   constructor() {
     // Inicialización al cargar el modo LOSETAS
-    if (this.modoJuego() === 'LOSETAS') {
+    if (this.modoJuego() === 'LOSETAS' && this.rutas().length === 0) {
       this.inicializarRutaInicial();
     }
   }
@@ -59,9 +57,7 @@ export class Acciones {
       .sort((a, b) => a.posicion - b.posicion)
       .map(c => c.id); // Guardamos solo sus IDs únicos de instancia
 
-    this.rutas.set([
-      { id: 1, nombre: 'MAZMORRA', cartasIds: todasCartasMazmorra }
-    ]);
+    this.misionService.inicializarRutasDesdeCero(todasCartasMazmorra);
   }
 
   /**
@@ -105,73 +101,60 @@ export class Acciones {
       return;
     }
 
-    // 1. Sacamos la primera carta asignada a este botón (la que está arriba)
     const idInstanciaARobar = rutaActual.cartasIds[0];
-    
-    // Extraemos la información real de la carta desde el servicio
     const cartaReal = this.deckService.cartasEnPartida().find(c => c.id === idInstanciaARobar);
     if (!cartaReal) return;
 
     const infoBiblioteca = this.deckService.biblioteca().find(c => c.idCarta === cartaReal.idCarta);
     if (!infoBiblioteca) return;
     
-    // 2. Quitamos la carta de la ruta en nuestro estado local
-    this.rutas.update(actuales => actuales.map(r => 
+    const rutasActualizadas = listaRutas.map(r => 
       r.id === rutaId ? { ...r, cartasIds: r.cartasIds.slice(1) } : r
-    ));
+    );
+    this.misionService.actualizarRutasLosetas(rutasActualizadas);
     
     this.deckService.robarCartaMazmorra(cartaReal, 'M-MAZ');
+    
     // ---- LÓGICA DE BIFURCACIÓN ----
     if ((
       infoBiblioteca.nombre.toLowerCase().includes('bifurcado') ||  
       infoBiblioteca.nombre.toLowerCase().includes('2 puertas')) 
-      && listaRutas.length < 3) {
-      this.procesarBifurcacion(rutaId);
+      && rutasActualizadas.length < 3) {
+
+      this.procesarBifurcacion(rutaId, rutasActualizadas);
     }
   }
 
-  private procesarBifurcacion(rutaOrigenId: number) {
-    const listaRutas = this.rutas();
-    const rutaOrigen = listaRutas.find(r => r.id === rutaOrigenId);
+  private procesarBifurcacion(rutaOrigenId: number, listaRutasActuales: RutaExploracion[]) {
+    const rutaOrigen = listaRutasActuales.find(r => r.id === rutaOrigenId);
 
     if (!rutaOrigen || rutaOrigen.cartasIds.length < 2) {
       console.log("No hay suficientes losetas para dividir el mazo o la ruta no existe.");
       return;
     }
 
-    const cartasRestantes = rutaOrigen.cartasIds; // [arriba, ..., abajo]
+    const cartasRestantes = rutaOrigen.cartasIds;
     const mazos: string[][] = [[], []]; 
 
-    // Recorremos de abajo a arriba (desde el final del array hacia el principio)
     let mazoDestino = 0;
     for (let i = cartasRestantes.length - 1; i >= 0; i--) {
-      const cartaId = cartasRestantes[i];
-
-      // .unshift() añade la carta ARRIBA (índice 0), empujando las anteriores ABAJO
-      mazos[mazoDestino].unshift(cartaId);
-
-      // Alternamos el mazo de destino de forma limpia (0 -> 1 -> 0 -> 1...)
+      mazos[mazoDestino].unshift(cartasRestantes[i]);
       mazoDestino = 1 - mazoDestino;
     }
 
-    // Tu lógica del random eficiente para decidir qué montón se queda en el origen
     const random0o1 = Math.floor(Math.random() * 2);
     const mazoOrigen = mazos[random0o1];
     const mazoNuevo = mazos[1 - random0o1];
 
-    // Buscamos el ID más alto existente para asegurar un ID único
-    const maxId = listaRutas.reduce((max, r) => r.id > max ? r.id : max, 0);
+    const maxId = listaRutasActuales.reduce((max, r) => r.id > max ? r.id : max, 0);
     const nuevoId = maxId + 1;
 
-    this.rutas.update(actuales => {
-      // 1. Modificamos la ruta de origen para que se quede con su mitad
-      const limpias = actuales.map(r => 
-        r.id === rutaOrigenId ? { ...r, cartasIds: mazoOrigen } : r
-      );
-      // 2. Añadimos la nueva ruta con la otra mitad
-      return [...limpias, { id: nuevoId, nombre: `MAZMORRA ${nuevoId}`, cartasIds: mazoNuevo }];
-    });
-
+    const limpias = listaRutasActuales.map(r => 
+      r.id === rutaOrigenId ? { ...r, cartasIds: mazoOrigen } : r
+    );
+    const estadoFinalRutas = [...limpias, { id: nuevoId, nombre: `MAZMORRA ${nuevoId}`, cartasIds: mazoNuevo }];
+    
+    this.misionService.actualizarRutasLosetas(estadoFinalRutas);
     console.log(`¡Bifurcación activada! Mazo repartido desde abajo. Creada Ruta ${nuevoId}`);
   }
   

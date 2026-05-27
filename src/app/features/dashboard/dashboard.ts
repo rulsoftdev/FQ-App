@@ -4,10 +4,12 @@ import { MisionService } from '../../core/services/mision.service';
 import { PersistenceService } from '../../core/services/persistence.service';
 import { UiService } from '../../core/services/ui.service';
 import { DeckService } from '../../core/services/deck.service';
-import { Mision } from '../../core/models/fetenquest.model';
+import { Mision } from '../../core/models/fetenquest.interface';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
+  imports: [RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   animations: [
@@ -24,6 +26,7 @@ import { Mision } from '../../core/models/fetenquest.model';
 })
 export class Dashboard {
 
+  private router = inject(Router);
   private misionService =  inject(MisionService);
   private uiService = inject(UiService);
   private deckService =  inject(DeckService);
@@ -59,6 +62,8 @@ export class Dashboard {
     
     // Cerramos el selector por si acaso volvemos atrás
     this.misionSeleccionadaId.set(null);
+
+    this.router.navigate(['/juego']);
   }
 
   ngOnInit() {
@@ -73,7 +78,9 @@ export class Dashboard {
     this.deckService.cargarCartasEnPartida(save.cartas);
     this.misionService.cargarPartida(save.partida);
     this.uiService.setModoVisualizacion(save.modo);
+    
     this.uiService.cambiaVista('VIEW_HEROES');
+    this.router.navigate(['/juego']);
   }
 
   public descartarGuardado(){

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Encuentro, Monstruo } from '../models/fetenquest.model';
+import { Encuentro, Monstruo } from '../models/fetenquest.interface';
 import { map, tap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { parseFullCsv } from '../utils';
@@ -76,6 +76,7 @@ export class EncuentrosService {
     return filas.map(fila => {
       return { 
         resultado: fila.resultado,
+        tipoLista: fila.tipoLista,
         familia: fila.familia,
         idsBestiario: fila.idsBestiario,
         monstruos: fila.monstruos,

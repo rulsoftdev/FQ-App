@@ -1,22 +1,19 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
-import { Mision } from './features/mision/mision';
 import { Header } from "./components/header/header";
 import { Navbar } from "./components/navbar/navbar";
-import { TurnoMB } from "./features/turno-mb/turno-mb";
 import { DeckService } from './core/services/deck.service';
 import { TurnoMBService } from './core/services/turno-mb.service';
-import { Mazo } from './features/mazo/mazo';
-import { VistaJuego } from './core/models/fetenquest.model';
+import { VistaJuego } from './core/models/fetenquest.interface';
 import { UiService } from './core/services/ui.service';
 import { MisionService } from './core/services/mision.service';
 import { forkJoin } from 'rxjs';
-import { Dashboard } from './features/dashboard/dashboard';
 import { EncuentrosService } from './core/services/encuentros.service';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [Mision, Header, Navbar, TurnoMB, Mazo, Dashboard],
+  imports: [Header, Navbar, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -31,7 +28,6 @@ export class App  implements OnInit {
   private encuentrosService = inject(EncuentrosService);
 
   // Estados de la aplicación
-  public vistaActual = this.uiService.vistaActual;
   public misionActual = this.misionService.misionActual;
   public cargando = signal<boolean>(true);
 

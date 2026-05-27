@@ -1,0 +1,64 @@
+/* Modificación en app.css */
+
+/* Necesitamos un envoltorio que centre la carta en la pantalla oscura */
+.game-viewport {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+.loading-container {
+  /* Usamos la imagen completa de la carta */
+  background-image: url('/textures/fondo_carta_FQ.png');
+  background-size: 100% 100%; 
+  background-repeat: no-repeat;
+  
+  /* Dimensiones para que luzca como una carta centrada */
+  width: 90%; /* Mejor para asegurar que en móviles no desborde */
+  max-width: 400px;
+  min-height: 500px;
+  
+  /* Centrado horizontal absoluto usando márgenes automáticos */
+  margin: 40px auto; 
+  
+  /* Centrado del contenido INSIDE de la carta */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* Padding para no pisar los bordes de piedra y cadenas de la carta */
+  padding: 80px 40px;
+  box-sizing: border-box; 
+  
+  text-align: center;
+  font-family: 'FetenQuestBody';
+  font-size: 1.3rem;
+  font-weight: 600;
+  
+  /* ¡CAMBIO CRÍTICO!: El color de tinta oscura sobre el pergamino claro de la carta */
+  color: #1b1210 !important; 
+
+  /* Añadimos una sombra proyectada para que la carta parezca flotar sobre el fondo de piedra general */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.7);
+
+  .texto-animado {
+    /* Efecto de fade-in */
+    animation: fadeInLetter 1.5s ease-in-out infinite alternate;
+    line-height: 1.4;
+    color: #1b1210 !important; /* Aseguramos que el hijo herede la tinta */
+    margin: 0;
+  }
+}
+
+@keyframes fadeInLetter {
+  from { 
+    opacity: 0.5; 
+    transform: scale(0.99); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1.01); /* Un sutil vaivén de tamaño */
+  }
+}

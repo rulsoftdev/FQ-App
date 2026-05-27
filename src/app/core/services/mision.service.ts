@@ -1,9 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
-import { stringToBoolean, parseFullCsv } from '../utils'; // Importamos las utils
+import { stringToBoolean, parseFullCsv, splitMultipleIds } from '../utils'; // Importamos las utils
 import { forkJoin, Observable } from 'rxjs';
-import { Mision, PartidaEnCurso } from '../models/fetenquest.model';
+import { Mision, PartidaEnCurso, RutaExploracion } from '../models/fetenquest.interface';
 import { MOCK_PARTIDA_ACTIVA } from '../../../assets/data/mocks';
 import { DeckService } from './deck.service';
 
@@ -74,28 +74,54 @@ export class MisionService {
   }
   
   /**
-     * MÉTODO PRINCIPAL: Configura todos los mazos según las reglas de la misión
-     */
-    configurarMision(mision: Mision) {
-      // --- PASO 1: TRAMPAS Y PASILLOS (COMPLETOS) ---
-      this.deckService.generarMazo('M-TRA');
-      this.deckService.generarMazo('M-PAS');
-      this.deckService.generarMazo('M-SUC');
-      
-      // --- PASO 2: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
-      this.deckService.generarMazoAtrezo(mision);
-  
-      // --- PASO 3: MAZO DE SALAS (LÓGICA CLÍMAX / BOSS) ---
-      this.deckService.generarMazoSalas(mision);
-  
-      // --- PASO 4: MAZMORRAS (OPCIONAL/RESTO) ---
-      this.deckService.generarMazoLosetas(mision);
-  
-      // --- PASO 5: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
-       this.deckService.generarMazoSalasEspeciales(mision);
-  
-      console.log('MAZO CONFIGURADO', this.deckService.cartasEnPartida());
-    }
+   * MÉTODO PRINCIPAL: Configura todos los mazos según las reglas de la misión
+   */
+  configurarMision(mision: Mision) {
+    // --- PASO 1: TRAMPAS Y PASILLOS (COMPLETOS) ---
+    this.deckService.generarMazo('M-TRA');
+    this.deckService.generarMazo('M-PAS');
+    this.deckService.generarMazo('M-SUC');
+    
+    // --- PASO 2: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
+    this.deckService.generarMazoAtrezo(mision);
+
+    // --- PASO 3: MAZO DE SALAS (LÓGICA CLÍMAX / BOSS) ---
+    this.deckService.generarMazoSalas(mision);
+
+    // --- PASO 4: MAZMORRAS (OPCIONAL/RESTO) ---
+    this.deckService.generarMazoLosetas(mision);
+
+    // --- PASO 5: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
+      this.deckService.generarMazoSalasEspeciales(mision);
+
+    console.log('MAZO CONFIGURADO', this.deckService.cartasEnPartida());
+  }
+
+  /**
+   * Inicializa la primera ruta ('MAZMORRA') metiendo todas las losetas en el botón base
+   */
+  public inicializarRutasDesdeCero(todasCartasIds: string[]) {
+    this._partida.update(actual => {
+      if (!actual) return actual;
+      return {
+        ...actual,
+        rutasLosetas: [{ id: 1, nombre: 'MAZMORRA', cartasIds: todasCartasIds }]
+      };
+    });
+  }
+
+  /**
+   * Actualiza el listado de rutas activas y bifurcadas desde el componente de acciones
+   */
+  public actualizarRutasLosetas(nuevasRutas: RutaExploracion[]) {
+    this._partida.update(actual => {
+      if (!actual) return actual;
+      return {
+        ...actual,
+        rutasLosetas: nuevasRutas
+      };
+    });
+  }
 
   /**
   * Selecciona una misión por ID y la prepara para el Mision
@@ -202,23 +228,16 @@ export class MisionService {
           atrezoSinAtrezo: Number(fila.conf_sin_atrezo) || 0,
           atrezoAzar: Number(fila.conf_atrezo_azar) || 0,
           atrezoCofre: Number(fila.conf_cofres) || 0,
-          tiposAtrezoFijos: this.splitMultipleIds(fila.conf_tipos_atrezos_fijo),
-          tiposAtrezoExcluido: this.splitMultipleIds(fila.conf_tipos_atrezo_excluido),
-          tiposSalasEsp: this.splitMultipleIds(fila.conf_tipos_salas_especiales),
-          idsSalasEspeciales: this.splitMultipleIds(fila.conf_ids_salas_especiales)
+          tiposAtrezoFijos: fila.conf_tipos_atrezos_fijo,
+          tiposAtrezoExcluido: fila.conf_tipos_atrezo_excluido,
+          tiposSalasEsp: fila.conf_tipos_salas_especiales,
+          idsSalasEspeciales: splitMultipleIds(fila.conf_ids_salas_especiales),
+          salasEspecialesAzar: fila.conf_salas_especiales_azar
         }
       };
       return mision;
     });
   }
 
-  /**
-   * Helper para manejar las listas de IDs dentro de una celda
-   */
-  private splitMultipleIds(valor: any): string[] {
-    if (!valor) return [];
-    // Aceptamos tanto comas como punto y coma por si el usuario se equivoca
-    const separador = String(valor).includes(';') ? ';' : ',';
-    return String(valor).split(separador).map(id => id.trim()).filter(id => id !== '');
-  }
+
 }

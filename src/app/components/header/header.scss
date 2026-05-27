@@ -5,15 +5,31 @@
   background-repeat: no-repeat;
   padding: 35px 20px;
   text-align: center;
-  margin-bottom: 5px;
+  max-width: 380px;
+  margin: 15px auto 5px auto;
 
   h1 {
     font-family: 'FetenQuestTitles';
-    color: #2c1e11; // Marrón oscuro para contraste con pergamino
+    color: #2c1e11; // Mantenemos tu marrón oscuro para contraste con pergamino
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-size: 1.1rem;
+    
+    // --- FUSIÓN Y MEJORAS PARA EVITAR DESBORDAMIENTO ---
+    // En lugar de un 1.1rem fijo, usamos un rango dinámico. 
+    // Si el título es corto, se mantendrá en tu escala (1.1rem). Si es largo, bajará hasta 0.85rem antes de romperse.
+    font-size: clamp(0.85rem, 2.5vw, 1.1rem); 
+    
+    width: 100%;
+    //max-width: 85%;      // Margen de seguridad para que nunca toque los bordes del marco de piedra
+    text-align: center;
+    
+    white-space: normal; // Permite que si el título es una locura de largo, haga un salto de línea limpio
+    line-height: 1.2;    // Asegura que si salta de línea, las letras góticas no se pisen entre sí
+  }
+
+  h5 {
+    margin: 0px;
   }
 
   .danger-badge {
@@ -31,7 +47,6 @@
   align-items: center;
   justify-content: center;
   gap: 15px;
-  margin-top: 10px;
 
   .danger-btn {
     background: rgba(44, 30, 17, 0.1); // Marrón muy suave (como tinta)

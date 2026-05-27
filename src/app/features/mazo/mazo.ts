@@ -1,7 +1,7 @@
 import { Component, computed, inject, Input, signal } from '@angular/core';
 import { DeckService } from '../../core/services/deck.service';
 import { UiService } from '../../core/services/ui.service';
-import { Carta, EstadoMazoMision } from '../../core/models/fetenquest.model';
+import { Carta, EstadoMazoMision } from '../../core/models/fetenquest.interface';
 
 @Component({
   selector: 'app-mazo',

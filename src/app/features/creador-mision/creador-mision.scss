@@ -1,0 +1,389 @@
+// --- CONTENEDOR GENERAL DE LA FORJA ---
+.wizard-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  min-height: calc(100vh - 140px);
+  box-sizing: border-box;
+}
+
+// --- CONTENEDOR PRINCIPAL (Sustituye a parchment-scroll) ---
+.parchment-scroll {
+  background: #141414; // Gris oscuro profundo idéntico al fondo de campañas
+  border: 1px solid #333333; // Borde fino y limpio
+  border-radius: 6px;
+  width: 100%;
+  max-width: 420px; // Formato compacto y estilizado
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  font-family: 'FetenQuestBody', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+// --- CABECERA Y BARRA DE PROGRESO ---
+.wizard-header {
+  background: #1c1c1c; // Ligeramente más claro para enmarcar la cabecera
+  padding: 15px 20px 12px 20px;
+  border-bottom: 1px solid #262626;
+  text-align: center;
+
+  .title-forged {
+    font-family: 'FetenQuestTitles', serif;
+    color: #ffffff;
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: #0d0d0d;
+    border-radius: 2px;
+    overflow: hidden;
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #b89b5e, #e4a834); // Degradado de oro viejo a bronce
+      transition: width 0.3s ease-in-out;
+    }
+  }
+}
+
+// --- CUERPO DEL CONTENIDO (PASOS) ---
+.step-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+// --- CAMPOS DE FORMULARIO GENÉRICOS ---
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    color: #e4a834; // El característico color naranja/dorado de tus títulos de misión
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  // Inputs, Textareas, Selects y Multi-selects unificados
+  input[type="text"], input[type="number"], select, textarea {
+    background: #0d0d0d;
+    color: #ffffff;
+    border: 1px solid #262626;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: 'FetenQuestBody', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #e4a834;
+      box-shadow: 0 0 8px rgba(228, 168, 52, 0.15);
+    }
+  }
+
+  textarea {
+    resize: none;
+  }
+
+  // Multi-select específico de la sección de IDs
+  .multi-select {
+    min-height: 120px;
+    padding: 6px;
+    
+    option {
+      padding: 6px 10px;
+      border-radius: 2px;
+      margin-bottom: 2px;
+
+      &:checked {
+        background: #262626 linear-gradient(0deg, #262626 0%, #262626 100%);
+        color: #e4a834;
+      }
+    }
+  }
+}
+
+// Rejilla de dos columnas (Modo de Juego y Dado de Peligro)
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+// --- FILAS DINÁMICAS (Atrezo) ---
+.dynamic-row {
+  display: grid;
+  grid-template-columns: 1fr 70px 35px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+
+  input[type="number"] {
+    text-align: center;
+  }
+
+  .btn-remove {
+    height: 36px;
+    background: #1a1414;
+    color: #ff5555;
+    border: 1px solid #3a1d1d;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background: #b71c1c;
+      color: #ffffff;
+    }
+  }
+}
+
+.sin-cantidad {
+  grid-template-columns: 1fr 35px !important;
+}
+
+// Secciones internas de Atrezo / Tipos
+.atrezo-section, .dynamic-list, .deck-config-box {
+  border-top: 1px solid #262626;
+  padding-top: 15px;
+  margin-top: 5px;
+
+  h3 {
+    color: #ffffff;
+    font-size: 0.85rem;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  h4 {
+    color: #e4a834;
+  }
+}
+
+// --- COMPONENTES ESPECIALES (Ranges y Switches) ---
+
+// Sliders de Rangos de Salas
+.deck-config-box {
+  background: #0d0d0d;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #262626;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: #262626;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #e4a834;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+      transition: transform 0.1s;
+    }
+
+    &::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+  }
+}
+
+// Switches de Inclusión estilo bloques de piedra
+.switches-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  .switch-block {
+    cursor: pointer;
+    position: relative;
+
+    input[type="checkbox"] {
+      display: none; // Escondemos el checkbox original
+    }
+
+    .stone-btn {
+      display: block;
+      background: #0d0d0d;
+      border: 1px solid #262626;
+      color: #777777;
+      padding: 10px;
+      text-align: center;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    // Cuando el checkbox está activo, el botón de piedra se ilumina estilo la app
+    input[type="checkbox"]:checked + .stone-btn {
+      background: #1c1913;
+      border-color: #e4a834;
+      color: #e4a834;
+      box-shadow: inset 0 0 6px rgba(228, 168, 52, 0.1);
+    }
+  }
+}
+
+// Selector de Modo del Paso 3 (Por Tipos / Por IDs)
+.toggle-mode-forged {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #0d0d0d;
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #262626;
+  margin-bottom: 5px;
+
+  button {
+    background: transparent;
+    border: none;
+    color: #777777;
+    padding: 8px;
+    font-family: 'FetenQuestBody', sans-serif;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s ease;
+
+    &.active {
+      background: #262626;
+      color: #f0d1a0;
+    }
+  }
+}
+
+// --- BOTONERA Y PIE DEL WIZARD ---
+.wizard-footer {
+  padding: 15px 20px;
+  background: #1c1c1c;
+  border-top: 1px solid #262626;
+  display: flex;
+  gap: 12px;
+}
+
+// Botones de acción unificados tipo bloque táctico
+.btn-stone-back, .btn-stone-next, .btn-stone-finish, .btn-add-stone {
+  flex: 1;
+  background: #262626;
+  color: #f0d1a0;
+  border: 1px solid #3d3d3d;
+  padding: 11px;
+  font-family: 'FetenQuestBody', sans-serif;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  text-align: center;
+  outline: none;
+
+  &:hover {
+    background: #2d2d2d;
+    color: #ffffff;
+    border-color: #e4a834;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Particularidades de botones
+.btn-stone-back {
+  background: #141414;
+  color: #777777;
+  border-color: #262626;
+
+  &:hover {
+    background: #1c1c1c;
+    color: #ff5555;
+    border-color: #aa3333;
+  }
+}
+
+.btn-stone-finish {
+  background: #1c1913;
+  color: #e4a834;
+  border-color: #e4a834;
+
+  &:hover {
+    background: #262015;
+    box-shadow: 0 0 10px rgba(228, 168, 52, 0.2);
+  }
+}
+
+.btn-add-stone {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.75rem;
+  background: #0d0d0d;
+  border-color: #262626;
+  margin-top: 5px;
+}
+
+.validation-error-stone {
+  background: rgba(139, 0, 0, 0.15);
+  border: 2px dashed #a30000;
+  color: #ff9e9e;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 15px 0;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.validation-success-stone {
+  background: rgba(34, 139, 34, 0.15);
+  border: 2px solid #228b22;
+  color: #a3ffa3;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 15px 0;
+}
+
+// Estilo para deshabilitar los botones de piedra rúnicos
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+  box-shadow: none !important;
+  border-color: #555 !important;
+}

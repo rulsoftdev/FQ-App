@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
-import { VistaJuego } from '../models/fetenquest.model';
+import { VistaJuego } from '../models/fetenquest.interface';
 
 
-type ModoJuego = 'TABLERO' | 'LOSETAS' | null;
+export type ModoJuego = 'TABLERO' | 'LOSETAS' | null;
 
 @Injectable({
   providedIn: 'root',

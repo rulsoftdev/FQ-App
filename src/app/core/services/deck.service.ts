@@ -1,10 +1,10 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
-import { stringToBoolean, parseFullCsv } from '../utils'; // Importamos las utils
-import { Carta, EstadoMazoMision, TipoPila, Mazo, FaseTurnoHeroes } from '../models/fetenquest.model'; // Ajusta rutas
+import { stringToBoolean, parseFullCsv, splitMultipleIds } from '../utils'; // Importamos las utils
+import { Carta, EstadoMazoMision, TipoPila, Mazo, FaseTurnoHeroes } from '../models/fetenquest.interface'; // Ajusta rutas
 import { forkJoin, Observable } from 'rxjs';
-import { Mision } from '../models/fetenquest.model';
+import { Mision } from '../models/fetenquest.interface';
 import { MisionService } from './mision.service';
 
 
@@ -94,7 +94,7 @@ export class DeckService {
     mazoFinal.push(...sinAtrezoSeleccionados);
 
     // 3. OBLIGATORIOS (Ej: "2-Libreria")
-    mision.configuracion!.tiposAtrezoFijos.forEach(item => {
+    splitMultipleIds(mision.configuracion!.tiposAtrezoFijos).forEach(item => {
       const [cantStr, tipoBusqueda] = item.includes('-') ? item.split('-') : ['1', item];
       const cantidad = Number(cantStr) || 1;
 
@@ -113,14 +113,16 @@ export class DeckService {
 
     // 4. ATREZOS AL AZAR (Rellenar con lo restante)
     const tiposExcluidos = mision.configuracion!.tiposAtrezoExcluido;
-    
-    const poolCandidatos = todasAtrezo.filter(c => 
-      c.tipo !== 'Cofre' && 
-      c.tipo !== 'Sin Atrezo' && 
-      !tiposExcluidos.includes(c.tipo) &&
-      // Evitamos duplicar cartas que ya han sido seleccionadas como fijas/obligatorias
-      !mazoFinal.some(yaEnMazo => yaEnMazo.idCarta === c.idCarta)
-    );
+    let poolCandidatos: Carta [] = [];
+    if (tiposExcluidos){
+      poolCandidatos = todasAtrezo.filter(c => 
+        c.tipo !== 'Cofre' && 
+        c.tipo !== 'Sin Atrezo' && 
+        !tiposExcluidos.includes(c.tipo) &&
+        // Evitamos duplicar cartas que ya han sido seleccionadas como fijas/obligatorias
+        !mazoFinal.some(yaEnMazo => yaEnMazo.idCarta === c.idCarta)
+      );
+    }
 
     // Barajamos el pool de candidatos sobrantes antes de elegir los necesarios
     const azarSeleccionados = this.barajar(this.crearEstadoMazo(poolCandidatos))
@@ -192,14 +194,15 @@ export class DeckService {
     const idsSalasEsp = mision.configuracion!.idsSalasEspeciales;
     const tiposSalasEsp = mision.configuracion!.tiposSalasEsp;
 
-    if (idsSalasEsp.length > 0) {
+    if (idsSalasEsp && idsSalasEsp.length > 0) {
       // 1. Selección por ID directo (aquí confiamos en que la config de la misión sea correcta)
       const salasSeleccionadas = todasSalasEspeciales.filter(c => idsSalasEsp.includes(c.idCarta));
       mazoSalasEspecialesListo = this.barajar(this.crearEstadoMazo(salasSeleccionadas));
 
-    } else if (tiposSalasEsp.length > 0) {
+    }
+    if (tiposSalasEsp && tiposSalasEsp.length > 0) {
       // 2. Selección por TIPO con control de duplicados
-      tiposSalasEsp.forEach(item => {
+      splitMultipleIds(tiposSalasEsp).forEach(item => {
         const [cantStr, tipoBusqueda] = item.includes('-') ? item.split('-') : ['1', item];
         const cantidad = Number(cantStr) || 1;
         
@@ -213,9 +216,9 @@ export class DeckService {
         const variantesAleatorias = this.barajar(this.crearEstadoMazo(variantesDisponibles));
 
         // Añadimos solo hasta el máximo disponible para no repetir IDs
-        const aAñadir = Math.min(cantidad, variantesAleatorias.length);
+        const aAnyadir = Math.min(cantidad, variantesAleatorias.length);
         
-        for (let i = 0; i < aAñadir; i++) {
+        for (let i = 0; i < aAnyadir; i++) {
           mazoSalasEspecialesListo.push(variantesAleatorias[i]);
         }
 
@@ -223,11 +226,18 @@ export class DeckService {
           console.warn(`Se pidieron ${cantidad} de ${tipoBusqueda}, pero solo hay ${variantesAleatorias.length} únicas disponibles.`);
         }
       });
-
-    } else {
+    }
+    if ( mision.configuracion!.salasEspecialesAzar > 0) {
       // 3. Selección aleatoria general
-      mazoSalasEspecialesListo = this.barajar(this.crearEstadoMazo(todasSalasEspeciales))
-        .slice(0, mision.configuracion!.salasEspeciales);
+      const restoDeCartas = todasSalasEspeciales.filter(c => 
+          c.tipo !== 'Sala Especial' && 
+          !mazoSalasEspecialesListo.some(e => e.idCarta === c.idCarta)
+        );
+      const salasAzar = this.barajar(this.crearEstadoMazo(restoDeCartas)
+        .slice(0, mision.configuracion!.salasEspecialesAzar));
+      for (let i = 0; i < salasAzar.length; i++) {
+        mazoSalasEspecialesListo.push(salasAzar[i]);
+      }
     }
 
     // Actualización del Signal
@@ -360,6 +370,10 @@ export class DeckService {
 
   obtenerMazo (idMazo: string): EstadoMazoMision[]{
     return this._cartasEnPartida().filter(c => c.idMazo === idMazo);
+  }
+
+  getMazoFull(idMazo: string): Carta[] {
+    return this._biblioteca().filter(c => c.idMazo === idMazo);
   }
 
   resetearCartaActiva() {

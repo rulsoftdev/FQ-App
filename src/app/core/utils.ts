@@ -23,3 +23,31 @@ export const stringToBoolean = (valor: any): boolean => {
   const str = String(valor).trim().toLowerCase();
   return ['true', 'yes', '1', 'si'].includes(str);
 };
+
+export const convertirAStringFormateadoConCantidad = (arrayDinamico: any[] | undefined | null): string => {
+  if (!arrayDinamico || !Array.isArray(arrayDinamico) || arrayDinamico.length === 0) {
+    return '';
+  }
+
+  return arrayDinamico
+    .filter(item => item && item.tipo && item.cantidad > 0) // Evitamos datos vacíos o cantidades a 0
+    .map(item => `${item.cantidad}-${item.tipo}`)           // Mapeamos a "Cantidad-Tipo"
+    .join(', ');                                            // Unimos con coma y espacio
+};
+
+export const convertirAStringFormateado = (arrayDinamico: any[] | undefined | null): string => {
+  if (!arrayDinamico || !Array.isArray(arrayDinamico) || arrayDinamico.length === 0) {
+    return '';
+  }
+
+  return arrayDinamico
+    .map(item => `${item.tipo}`)       
+    .join(', ');                       // Unimos con coma y espacio
+};
+
+export const splitMultipleIds = (valor: any): string[] => {
+  if (!valor) return [];
+  // Aceptamos tanto comas como punto y coma por si el usuario se equivoca
+  const separador = String(valor).includes(';') ? ';' : ',';
+  return String(valor).split(separador).map(id => id.trim()).filter(id => id !== '');
+};

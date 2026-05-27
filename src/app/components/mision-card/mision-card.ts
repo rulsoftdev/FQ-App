@@ -1,5 +1,5 @@
 import { Component, inject, Input } from '@angular/core';
-import { Mision } from '../../core/models/fetenquest.model';
+import { Mision } from '../../core/models/fetenquest.interface';
 import { UiService } from '../../core/services/ui.service';
 import { MisionService } from '../../core/services/mision.service';
 import { PersistenceService } from '../../core/services/persistence.service';

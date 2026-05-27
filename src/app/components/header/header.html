@@ -1,16 +1,18 @@
 <header class="game-info">
-    <h1>{{ this.misionActual()?.nombre || 'FetenQuest' }}</h1>
-    
-    @if (this.misionActual()) {
-        <div class="danger-control">
-            <button (click)="cambiarPeligro(-1)" class="danger-btn">-</button>
-            
-            <div class="danger-display">
-            <span class="danger-label">NIVEL DE PELIGRO:</span>
-            <span class="danger-value">{{ this.partida().nivelPeligroActual }}</span>
-            </div>
-            
-            <button (click)="cambiarPeligro(1)" class="danger-btn">+</button>
-        </div>
-    }
+  <h1>{{ tituloDinamico() }}</h1>
+  @if (misionActual()) {
+    <div class="danger-control">
+      <button (click)="cambiarPeligro(-1)" class="danger-btn">-</button>
+      
+      <div class="danger-display">
+        <span class="danger-label">NIVEL DE PELIGRO:</span>
+        <span class="danger-value">{{ partida().nivelPeligroActual }}</span>
+      </div>
+      
+      <button (click)="cambiarPeligro(1)" class="danger-btn">+</button>
+    </div>
+  }
+  @if (autor()) {
+    <h5>{{ autor () }}</h5>
+  }
 </header>

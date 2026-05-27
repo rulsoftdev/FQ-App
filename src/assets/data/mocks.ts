@@ -1,4 +1,4 @@
-import { Mazo, Carta, Mision, PartidaEnCurso, EstadoMazoMision } from '../../app/core/models/fetenquest.model';
+import { Mazo, Carta, Mision, PartidaEnCurso, EstadoMazoMision } from '../../app/core/models/fetenquest.interface';
 
 // --- MAZOS DISPONIBLES ---
 export const MOCK_MAZOS: Mazo[] = [
@@ -63,10 +63,11 @@ export const MOCK_MISION_AVENTURA: Mision = {
     atrezoSinAtrezo: 10,
     atrezoAzar: 9,
     atrezoCofre: 1, // Empezamos con 1 cofre
-    tiposAtrezoFijos: [], // tipos obligatorios, pero aleatorio por ejemplo un armario, pero si no hay nada definido es al azar
-    tiposAtrezoExcluido: [],
-    tiposSalasEsp: [],
+    tiposAtrezoFijos: "", // tipos obligatorios, pero aleatorio por ejemplo un armario, pero si no hay nada definido es al azar
+    tiposAtrezoExcluido: "",
+    tiposSalasEsp: "",
     idsSalasEspeciales: ['C-ESP-01', 'C-ESP-02', 'C-ESP-03'],
+    salasEspecialesAzar: 0
   }
 };
 

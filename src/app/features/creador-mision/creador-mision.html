@@ -1,0 +1,259 @@
+<div class="wizard-overlay stone-bg">
+  <form [formGroup]="wizardForm" class="parchment-scroll">
+    
+    <div class="wizard-header">
+      <h2 class="title-forged">PASO {{ pasoActual }} / 4</h2>
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="(pasoActual / 4) * 100"></div>
+      </div>
+    </div>
+
+    @if (pasoActual === 1) {
+      <div formGroupName="paso1" class="step-content">
+        <div class="form-field">
+          <label>NOMBRE DE LA AVENTURA</label>
+          <input formControlName="nombre" type="text" placeholder="Ej: La Cripta Maldita">
+        </div>
+
+        <div class="form-field">
+          <label>INTRODUCCIÓN ÉPICA</label>
+          <textarea formControlName="introduccion" rows="4"></textarea>
+        </div>
+
+        <div class="grid-2-cols">
+          <div class="form-field">
+            <label>Peligro inicial</label>
+            <input formControlName="peligroInicial" type="text" placeholder="0">
+          </div>        
+          <div class="form-field">
+            <label>DADO DE PELIGRO</label>
+            <select formControlName="dadoTrampa">
+              <option value="1D12">1D12 (FÁCIL)</option>
+              <option value="1D10">1D10 (NORMAL)</option>
+              <option value="1D8">1D8 (HEROICO)</option>
+              <option value="1D6">1D6 (INFIERNO)</option>
+              <option value="1D4">1D4 (SUICIDIO)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>TABLA DE ENCUENTROS</label>
+          <select formControlName="tablaEncuentros">
+            @for (tabla of listadoTablasEncuentros(); track tabla) {
+              <option [value]="tabla">{{ tabla }}</option>
+            }
+          </select>
+        </div>
+        <div class="grid-2-cols">
+          <div class="form-field">
+            <label>Errante</label>
+            <input formControlName="errante" type="text" placeholder="Ej: Goblin">
+          </div>
+          <div class="form-field">
+            <label>Errante superior</label>
+            <input formControlName="erranteSuperior" type="text" placeholder="Ej: Orco">
+          </div>
+        </div>
+
+        @if (wizardForm.get('paso1')?.invalid && wizardForm.get('paso1')?.touched) {
+          <div class="validation-error-stone">
+            ⚠️ Las runas dictan que debes rellenar todos los campos para poder continuar.
+          </div>
+        } 
+      </div>
+    }
+
+    @if (pasoActual === 2) {
+      <div formGroupName="paso2" class="step-content">
+        <div class="toggle-mode-forged">
+          <button type="button" 
+            [class.active]="wizardForm.get('paso2.tipoMision')?.value === 'TABLERO'"
+            (click)="wizardForm.get('paso2.tipoMision')?.setValue('TABLERO')">
+            MODO TABLERO
+          </button>
+          <button type="button" 
+            [class.active]="wizardForm.get('paso2.tipoMision')?.value === 'LOSETAS'"
+            (click)="wizardForm.get('paso2.tipoMision')?.setValue('LOSETAS')">
+            MODO LOSETAS
+          </button>
+        </div>
+        
+        <div class="deck-config-box">
+          @if (wizardForm.get('paso2.tipoMision')?.value === 'TABLERO') {
+            <h3>CONFIGURACIÓN TABLERO</h3>
+            <div class="form-field">
+              <label>SALAS NORMALES: {{ wizardForm.get('paso2.salasNormales')?.value }}</label>
+              <input type="range" formControlName="salasNormales" min="1" max="15">
+            </div>
+            <div class="form-field">
+              <label>SALAS ESPECIALES: {{ wizardForm.get('paso2.salasEspeciales')?.value }}</label>
+              <input type="range" formControlName="salasEspeciales" min="0" max="10">
+            </div>
+          }
+
+          @if (wizardForm.get('paso2.tipoMision')?.value === 'LOSETAS') {
+            <h3>CONFIGURACIÓN LOSETAS</h3>
+            <div class="form-field">
+              <label>MAZMORRA NORMALES: {{ wizardForm.get('paso2.mazmorraSalasNormales')?.value }}</label>
+              <input type="range" formControlName="mazmorraSalasNormales" min="0" max="15">
+            </div>
+            <div class="form-field">
+              <label>MAZMORRA ESPECIALES: {{ wizardForm.get('paso2.mazmorraSalasEspeciales')?.value }}</label>
+              <input type="range" formControlName="mazmorraSalasEspeciales" min="0" max="15">
+            </div>
+            <div class="form-field">
+              <label>MAZMORRA PASILLOS: {{ wizardForm.get('paso2.mazmorraPasillos')?.value }}</label>
+              <input type="range" formControlName="mazmorraPasillos" min="0" max="15">
+            </div>
+          }
+        </div>
+
+        <div class="switches-grid">
+          <label class="switch-block">
+            <input type="checkbox" formControlName="incluyeEscalera">
+            <span class="stone-btn">ESCALERA</span>
+          </label>
+          <label class="switch-block">
+            <input type="checkbox" formControlName="incluyeSalaObjetivo">
+            <span class="stone-btn">SALA OBJETIVO</span>
+          </label>
+        </div>
+
+        @if (wizardForm.get('paso2')?.invalid && wizardForm.get('paso2')?.touched) {
+          <div class="validation-error-stone">
+            ⚠️ Revisa la configuración del mapa. Hay valores que no son correctos.
+          </div>
+        }
+      </div>
+    }
+
+    @if (pasoActual === 3) {
+      <div formGroupName="paso3" class="step-content">
+        <div class="deck-config-box">
+          <h3>CONFIGURACIÓN DE ATREZO</h3>
+          <div class="form-field">
+            <label>SIN ATREZO: {{ wizardForm.get('paso3.sinAtrezo')?.value }}</label>
+            <input type="range" formControlName="sinAtrezo" min="1" max="15">
+          </div>
+          <div class="form-field">
+            <label>ATREZO ALEATORIO: {{ wizardForm.get('paso3.atrezoAzar')?.value }}</label>
+            <input type="range" formControlName="atrezoAzar" min="0" max="15">
+          </div>
+          <div class="form-field">
+            <label>COFRES: {{ wizardForm.get('paso3.atrezoCofre')?.value }}</label>
+            <input type="range" formControlName="atrezoCofre" min="1" max="5">
+          </div>
+        </div>
+        <div class="atrezo-section">
+          <div class="form-field">
+            <label>TIPOS DE ATREZO A INCLUIR</label>
+            <div formArrayName="tiposAtrezoFijos">
+              @for (item of tiposAtrezoFijos.controls; track $index) {
+                <div [formGroupName]="$index" class="dynamic-row">
+                  <select formControlName="tipo">
+                    @for (t of listadoTiposAtrezos(); track t) { <option [value]="t">{{t}}</option> }
+                  </select>
+                  <input type="number" formControlName="cantidad" min="1">
+                  <button (click)="eliminarAtrezoFijo($index)" class="btn-remove">×</button>
+                </div>
+              }
+            </div>
+          </div>
+          <button (click)="anyadirAtrezoFijo()" class="btn-add-stone">+ AÑADIR ATREZO</button>
+        </div>
+        <div class="atrezo-section">
+          <div class="form-field">
+            <label>TIPOS ATREZO A EXCLUIR</label>
+            <select formControlName="tiposAtrezoExcluido" multiple class="multi-select">
+                @for (tipo of listadoTiposAtrezos(); track tipo) {
+                  <option [value]="tipo">{{ tipo }}</option>
+                }
+            </select>
+          </div>
+        </div>    
+
+        @if (wizardForm.get('paso3')?.invalid && wizardForm.get('paso3')?.touched) {
+          <div class="validation-error-stone">
+            ⚠️ Asegúrate de que las cantidades de atrezo dinámico o fijo sean válidas.
+          </div>
+        }
+      </div>  
+    }
+
+    @if (pasoActual === 4) {
+      <div formGroupName="paso4" class="step-content">
+        <div class="form-field">
+          <label>CONFIGURACIÓN DE SALAS ESPECIALES</label>       
+          <div formArrayName="tiposSalasEsp">
+            @for (item of tiposSalasEsp.controls; track $index) {
+              <div [formGroupName]="$index" class="dynamic-row">
+                <select formControlName="tipo">
+                  @for (t of listadoTiposSalasEsp(); track t) { <option [value]="t">{{t}}</option> }
+                </select>
+                <input type="number" formControlName="cantidad" min="1">
+                <button (click)="eliminarSalaEspecialFija($index)" class="btn-remove">×</button>
+              </div>
+            }
+          </div>
+        </div>
+        <button (click)="anyadirSalaEspecialFija()" class="btn-add-stone">+ AÑADIR TIPO SALA</button>
+        <div class="atrezo-section">
+          <div class="deck-config-box">
+            <div class="form-field">
+              <label>SALAS AL AZAR: {{ wizardForm.get('paso4.salasEspecialesAzar')?.value }}</label>
+              <input type="range" formControlName="salasEspecialesAzar" min="0" max="10">
+            </div>
+          </div>
+        </div>
+        <div class="atrezo-section">
+          <div class="form-field">
+            <label>SELECCIONAR SALAS ESPECÍFICAS</label>
+            <select formControlName="idsSalasEspeciales" multiple class="multi-select">
+                @for (carta of listadoIdsSalasEspecialesEspecificas(); track carta.idCarta) {
+                  <option [value]="carta.idCarta">{{ carta.nombre }}</option>
+                }
+            </select>
+          </div>
+        </div>
+
+        <div class="validation-summary-box">
+          @if (totalSalasConfiguradasPaso4 < objetivoSalasEspeciales) {
+            <div class="validation-error-stone dynamic-alert">
+              ⚔️ Discordancia en el Grimorio: Has asignado <strong>{{ totalSalasConfiguradasPaso4 }}</strong> salas especiales, 
+              pero en el Paso 2 definiste que la aventura requería al menos <strong>{{ objetivoSalasEspeciales }}</strong>. ¡Ajusta el recuento!
+            </div>
+          } @else {
+            <div class="validation-success-stone">
+              ✨ El balance de salas es perfecto. Las energías mágicas están listas para la forja.
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="wizard-footer">
+      @if (pasoActual > 1) {
+        <button type="button" (click)="retrocederPaso()" class="btn-stone-back">VOLVER</button>
+      } @else {
+        <button type="button" routerLink="/dashboard" class="btn-stone-back">CANCELAR</button>
+      }
+
+      @if (pasoActual < 4) {
+        <button type="button" 
+                (click)="avanzarPaso()" 
+                class="btn-stone-next" 
+                [disabled]="!esPasoValido()">
+          SIGUIENTE
+        </button>
+      } @else {
+        <button type="button" 
+                (click)="finalizarMisionCustom()" 
+                class="btn-stone-finish" 
+                [disabled]="!esPasoValido()">
+          FORJAR AVENTURA
+        </button>
+      }
+    </div>
+  </form>
+</div>

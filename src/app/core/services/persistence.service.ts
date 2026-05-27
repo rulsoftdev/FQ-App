@@ -38,5 +38,6 @@ export class PersistenceService {
 
   clearSave() {
     localStorage.removeItem('FQ_SAVE_SLOT');
+    localStorage.removeItem('FQ_CUSTOM_MISSION');
   }
 }

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { DeckService } from '../../core/services/deck.service';
-import { Monstruo } from '../../core/models/fetenquest.model';
+import { Monstruo } from '../../core/models/fetenquest.interface';
 import { Acciones } from "../../components/acciones/acciones";
 import { TurnoMBService } from '../../core/services/turno-mb.service';
 import { MisionService } from '../../core/services/mision.service';

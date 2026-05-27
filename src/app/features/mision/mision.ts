@@ -40,6 +40,8 @@ export class Mision implements OnInit{
 
   ngOnInit(): void {
     this.encuentrosService.cargarEncuentrosMision(this.mision()?.tablaEncuentros!);
+    console.log("Entramos en la misión");
+    console.log("CARTA ACTIVA", this.deckService.cartaActiva());
   }
 
   /**

@@ -1,10 +1,48 @@
 .nav-mini {
   display: flex;
-  justify-content: right;
+  // CAMBIO CRÍTICO: 'space-between' empuja el botón a la izquierda 
+  // y la píldora de los sellos a la derecha de forma limpia
+  justify-content: space-between; 
+  align-items: center; // Alinea verticalmente el botón con la píldora
   padding: 10px 0;
-  margin-top: -5px; /* Lo pegamos un poco al header */
+  margin: 0px auto;
+  max-width: 380px;
+  width: 100%; // Asegura que use todo el ancho del max-width disponible
 }
 
+/* --- BOTÓN DE RETIRADA (NUEVO) --- */
+.btn-retirada {
+  background: #110d0a;
+  color: #b89b5e; 
+  border: 1px solid #2c1e11;
+  padding: 10px 12px;
+  font-family: 'FetenQuestBody', sans-serif;
+  font-size: 0.8rem; // A juego con el tamaño de los textos de tus sellos
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  outline: none;
+  text-shadow: 1px 1px 2px black;
+
+  &:hover {
+    background: #1a130e;
+    color: #f0d1a0; // Tu tono beige/oro de los sellos
+    border-color: #443222;
+    box-shadow: 0 0 8px rgba(184, 155, 94, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.96); // Sutil feedback táctil de hundimiento
+  }
+}
+
+/* --- TUS ESTILOS ORIGINALES INTACTOS --- */
 .piedra-base {
   display: flex;
   align-items: center;

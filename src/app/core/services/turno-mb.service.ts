@@ -3,7 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { map, tap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { parseFullCsv } from '../utils';
-import { Evento, FaseTurnoMB, MensajeTurnoMB, Monstruo } from '../models/fetenquest.model';
+import { Evento, FaseTurnoMB, MensajeTurnoMB, Monstruo } from '../models/fetenquest.interface';
 
 @Injectable({
   providedIn: 'root',

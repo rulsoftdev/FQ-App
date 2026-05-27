@@ -44,10 +44,10 @@ export interface EstadoMazoMision {
 
 export interface Mision {
   id: string;
-  imagen: string;
-  campanya: string;
+  imagen?: string;
+  campanya?: string;
   nombre: string;
-  autor: string;
+  autor?: string;
   lore: string;
   dificultad: number; // 1 a 5
   nivelPeligroInicial: number;
@@ -55,9 +55,9 @@ export interface Mision {
   tablaEncuentros: string;
   monstruoErrante: string;
   monstruoErranteSuperior: string;
-  reglasEspeciales: string;
-  salaObjetivo: string;
-  finMision: string;
+  reglasEspeciales?: string;
+  salaObjetivo?: string;
+  finMision?: string;
   configuracion?: {
     salasNormales: number;
     salasEspeciales: number;
@@ -70,11 +70,19 @@ export interface Mision {
     atrezoSinAtrezo: number;
     atrezoAzar: number;
     atrezoCofre: number; 
-    tiposAtrezoFijos: string[]; 
-    tiposAtrezoExcluido: string[];
-    tiposSalasEsp: string[]; 
+    tiposAtrezoFijos: string; 
+    tiposAtrezoExcluido: string;
+    tiposSalasEsp: string; 
     idsSalasEspeciales: string[]; 
+    salasEspecialesAzar: number;
   };
+}
+
+// Añade esta interfaz si no la tenías declarada de forma global
+export interface RutaExploracion {
+  id: number;
+  nombre: string;
+  cartasIds: string[]; // IDs únicos de instancia asignados a esta ruta
 }
 
 export interface PartidaEnCurso {
@@ -86,10 +94,12 @@ export interface PartidaEnCurso {
   dadoTrampa: string;
   fechaGuardado: Date;
   hitosReclamados: number[];
+  rutasLosetas?: RutaExploracion[];
 }
 
 export interface Encuentro {
   resultado: string;
+  tipoLista: string;
   familia: string;
   idsBestiario: string;
   monstruos: string;

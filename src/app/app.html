@@ -1,29 +1,9 @@
 <div class="app-viewport-container">
-    <app-header></app-header>
+  <app-header></app-header>
 
-    <app-navbar></app-navbar>
+  <app-navbar></app-navbar>
 
-    <main class="game-viewport">
-        @if (cargando()) {
-            <div class="loading-container">
-                <p class="texto-animado">Creando las salas, añadiendo las trampas y preparando encuentros...</p>
-            </div>
-        } @else {
-            @if (misionActual()) {
-                @switch (vistaActual()) {
-                    @case ('VIEW_HEROES') {
-                        <app-mision></app-mision>
-                    }
-                    @case ('VIEW_MB') {
-                        <app-turno-mb></app-turno-mb>
-                    }
-                    @case ('VIEW_MAZO'){
-                        <app-mazo></app-mazo>
-                    }
-                }
-            } @else {
-                <app-dashboard></app-dashboard>
-            }
-        }
-    </main>
+  <main class="game-viewport">
+    <router-outlet></router-outlet>
+  </main>
 </div>
