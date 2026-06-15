@@ -12,9 +12,15 @@
                 <div class="modal-header">
                     <h2>RESULTADO DE LA TIRADA: {{ this.mensajeEscrito().resultadoDado }}</h2>
                 </div>
-                <div class="modal-body">
+                @if (this.mensajeEscrito().tipoTirada === 'EVENTO') {
+                  <div class="modal-body-evento">
                     {{ this.mensajeEscrito().texto }}
-                </div>
+                  </div>
+                } @else {
+                  <div class="modal-body">
+                    {{ this.mensajeEscrito().texto }}
+                  </div>
+                }                    
             </div>
         </div>
     </div>

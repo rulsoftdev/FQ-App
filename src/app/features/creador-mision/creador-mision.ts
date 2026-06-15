@@ -282,7 +282,7 @@ export class CreadorMision {
       this.misionService.inicializarPartida(misionEstructurada);
       this.misionService.configurarMision(misionEstructurada);
 
-      this.router.navigate(['/juego']);
+      this.router.navigate(['/la-mazmorra']);
     }
   }
 }

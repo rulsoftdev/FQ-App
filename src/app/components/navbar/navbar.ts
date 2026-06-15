@@ -33,6 +33,6 @@ export class Navbar {
     this.misionService.misionActual.set(null); 
     
     // 2. Teletransporte de vuelta al Dashboard
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/la-taberna']);
   }
 }

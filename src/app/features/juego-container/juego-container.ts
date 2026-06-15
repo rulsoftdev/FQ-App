@@ -27,7 +27,7 @@ export class JuegoContainer implements OnInit {
     console.log('Arrancando partida para la misión:', this.misionActual()?.nombre);
     console.log('Vista inicial establecida en:', this.vistaActual());
     if (!this.misionActual()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/la-taberna']);
       return;
     }
 

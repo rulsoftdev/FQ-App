@@ -23,7 +23,7 @@ export interface Carta {
   tipo: string;    // "Normal", "Especial", "Sin Atrezo", "Cofre", etc.
   oficial: boolean;
   juego: JuegoBase;
-  numeroCopias: number;
+  subePeligro: boolean;
   descripcion?: string; // Para el texto épico en el pergamino del Mision
 }
 
@@ -126,10 +126,12 @@ export interface Monstruo {
 export interface MensajeTurnoMB {
   resultadoDado: number;
   texto: string;
+  tipoTirada: string;
 }
 
 export interface Evento {
   resultadoDado: number;
   tipo: string;
   texto: string;
+  nivelPeligro: number;
 }

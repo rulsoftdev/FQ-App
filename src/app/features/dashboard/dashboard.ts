@@ -63,7 +63,7 @@ export class Dashboard {
     // Cerramos el selector por si acaso volvemos atrás
     this.misionSeleccionadaId.set(null);
 
-    this.router.navigate(['/juego']);
+    this.router.navigate(['/la-mazmorra']);
   }
 
   ngOnInit() {
@@ -80,7 +80,7 @@ export class Dashboard {
     this.uiService.setModoVisualizacion(save.modo);
     
     this.uiService.cambiaVista('VIEW_HEROES');
-    this.router.navigate(['/juego']);
+    this.router.navigate(['/la-mazmorra']);
   }
 
   public descartarGuardado(){

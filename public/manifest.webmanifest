@@ -1,9 +1,9 @@
 {
   "name": "FetenQuest",
   "short_name": "FQ",
-  "id": "/FQApp/",
-  "scope": "/FQApp/",
-  "start_url": "/FQApp/",
+  "id": "/FAIApp/",
+  "scope": "/FAIApp/",
+  "start_url": "/FAIApp/",
   "icons": [
     {
       "src": "icons/icon-96x96.png",
@@ -26,5 +26,5 @@
   ],
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "fullscreen"
 }

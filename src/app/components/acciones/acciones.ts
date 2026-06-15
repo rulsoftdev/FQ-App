@@ -164,7 +164,7 @@ export class Acciones {
    */
   public robarCarta(idMazo: string): void {
     this.deckService.robarCarta(idMazo);
-    if(this.cartaActiva()?.idMazo === 'M-SAL' && this.cartaActiva()?.tipo === "Especial"){
+    if(this.cartaActiva()?.subePeligro){
       this.misionService.actualizarNivelPeligro(1);
     }
   }
@@ -215,7 +215,7 @@ export class Acciones {
     }
 
     this.turnoMBService.cambiarFaseTurnoMB('MENSAJE');
-    this.turnoMBService.actualizarMensaje(dado, resultado);
+    this.turnoMBService.actualizarMensaje(dado, resultado, "PELIGRO");
   }
 
   public tiradaErrantes() {
@@ -233,7 +233,7 @@ export class Acciones {
       }
   
       this.turnoMBService.cambiarFaseTurnoMB('MENSAJE');
-      this.turnoMBService.actualizarMensaje(dado, resultado);
+      this.turnoMBService.actualizarMensaje(dado, resultado, "ERRANTES");
     }
   }
 
@@ -244,12 +244,13 @@ export class Acciones {
   public tiradaEventos(){
     const dado = Math.floor(Math.random() * 20) + 1;    
     const evento = this.turnoMBService.obtenerEvento(dado, this.uiService.modoJuego()!);
-    if(dado === 4){
-      this.misionService.degradarDadoTrampa();
-    }
     if(evento){
+      if(dado === 4){
+        this.misionService.degradarDadoTrampa();
+      }
+      this.misionService.actualizarNivelPeligro(evento.nivelPeligro);
       this.turnoMBService.cambiarFaseTurnoMB('MENSAJE');
-      this.turnoMBService.actualizarMensaje(dado, evento.texto);
+      this.turnoMBService.actualizarMensaje(dado, evento.texto, "EVENTO");
     }
   }
 

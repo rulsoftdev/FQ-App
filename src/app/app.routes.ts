@@ -5,22 +5,22 @@ import { JuegoContainer } from './features/juego-container/juego-container'; // 
 
 export const routes: Routes = [
   { 
-    path: 'dashboard', 
+    path: 'la-taberna', 
     component: Dashboard,
     title: 'Feten Quest - Taberna'
   },
   { 
-    path: 'crear-mision', 
+    path: 'forjar-aventura', 
     component: CreadorMision,
     title: 'Feten Quest - Forjar Misión'
   },
   { 
-    path: 'juego', 
+    path: 'la-mazmorra', 
     component: JuegoContainer,
     title: 'Feten Quest - En la Mazmorra'
   },
   
   // Enrutamiento por defecto: Si no hay ruta o se escribre algo mal, al menú principal
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: '/dashboard' }
+  { path: '', redirectTo: '/la-taberna', pathMatch: 'full' },
+  { path: '**', redirectTo: '/la-taberna' }
 ];

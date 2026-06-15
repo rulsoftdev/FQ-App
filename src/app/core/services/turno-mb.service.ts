@@ -21,7 +21,8 @@ export class TurnoMBService {
 
   private _mensajeTurnoMB = signal<MensajeTurnoMB>({
     resultadoDado: 0, 
-    texto: "Escoge la acción que deseas realizar hereje."
+    texto: "Escoge la acción que deseas realizar hereje.",
+    tipoTirada: ""
   });
 
   public readonly mensajeTurnoMB = this._mensajeTurnoMB.asReadonly();
@@ -50,12 +51,13 @@ export class TurnoMBService {
     });
   }
 
-  actualizarMensaje(resultadoDado: number, nuevoTexto: string) {
+  actualizarMensaje(resultadoDado: number, nuevoTexto: string, tipoTirada: string) {
     this._mensajeTurnoMB.update(actual => {
       return {
         ...actual,
         resultadoDado: resultadoDado, 
-        texto: nuevoTexto
+        texto: nuevoTexto,
+        tipoTirada: tipoTirada
       }
     });
   }
@@ -105,7 +107,8 @@ export class TurnoMBService {
     return filas.map(f => ({
       resultadoDado: f.resultado,
       tipo: f.tipo,
-      texto: f.evento
+      texto: f.evento,
+      nivelPeligro: f.nivelPeligro
     }))
   }
 }

@@ -490,7 +490,7 @@ export class DeckService {
       tipo: 'Especial',
       oficial: true,
       juego: 'FetenQuest',
-      numeroCopias: 0
+      subePeligro: false
     });
   }
 
@@ -637,7 +637,7 @@ export class DeckService {
         juego: fila.juego, 
         // PapaParse con dynamicTyping: true ya suele darte el número, 
         // pero asegurar con Number() no está de más
-        numeroCopias: Number(fila.numeroCopias) || 1 
+        subePeligro: Number(fila.subePeligro) || false
       } as Carta;
     });
   }
@@ -658,14 +658,10 @@ export class DeckService {
   }
 
   public crearEstadoMazo(cartas: Carta[]): EstadoMazoMision[] {
-    // 1. Extraemos y generamos las instancias (copias) desde la biblioteca
-    const nuevasCartasInstanciadas = cartas.flatMap(carta => {
-      return Array(carta.numeroCopias || 1)
-        .fill(null)
-        .map(() => this.mapearACartaEstado(carta));
-    });
+    // 1. Transformamos directamente cada carta en su estado inicial (relación 1 a 1)
+    const nuevasCartasInstanciadas = cartas.map(carta => this.mapearACartaEstado(carta));
 
-    // 2. Barajamos solo el nuevo grupo de cartas
+    // 2. Barajamos el grupo de cartas generado
     return this.barajar(nuevasCartasInstanciadas as EstadoMazoMision[]);
   }
 

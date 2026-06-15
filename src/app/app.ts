@@ -48,36 +48,48 @@ export class App  implements OnInit {
     }
   }
 
-ngOnInit() {
-  this.cargando.set(true);
+  ngOnInit() {
+    this.cargando.set(true);
 
-  // Agrupamos todas las cargas iniciales
-  forkJoin({
-    mazos: this.deckService.inicializarDatos(),
-    bestiario: this.turnoMBService.inicializarDatos(),
-    misiones: this.misionService.inicializarDatos(),
-    encuentros: this.encuentrosService.inicializarDatos()
-  }).subscribe({
-    next: (resultado) => {
-      console.log('✅ Todo el contenido de FetenQuest cargado');
-      
-      // AHORA SÍ: La biblioteca ya existe, podemos configurar la misión
-      //const misionInicial = this.misionService.misiones()[0];
-      /*if (misionInicial) {
-        // Primero configuramos la misión (que asumo que lee de la biblioteca de mazos)
-        this.misionService.configurarMision(misionInicial);
-        this.misionService.seleccionarMision(misionInicial.id);
-      }*/
+    // Agrupamos todas las cargas iniciales
+    forkJoin({
+      mazos: this.deckService.inicializarDatos(),
+      bestiario: this.turnoMBService.inicializarDatos(),
+      misiones: this.misionService.inicializarDatos(),
+      encuentros: this.encuentrosService.inicializarDatos()
+    }).subscribe({
+      next: (resultado) => {
+        this.activarPantallaCompleta();
+        console.log('✅ Todo el contenido de FetenQuest cargado');
+        
+        // AHORA SÍ: La biblioteca ya existe, podemos configurar la misión
+        //const misionInicial = this.misionService.misiones()[0];
+        /*if (misionInicial) {
+          // Primero configuramos la misión (que asumo que lee de la biblioteca de mazos)
+          this.misionService.configurarMision(misionInicial);
+          this.misionService.seleccionarMision(misionInicial.id);
+        }*/
 
-      this.cargando.set(false);
-    },
-    error: (err) => {
-      console.error('❌ Error crítico en la carga inicial:', err);
-      this.cargando.set(false);
+        this.cargando.set(false);
+      },
+      error: (err) => {
+        console.error('❌ Error crítico en la carga inicial:', err);
+        this.cargando.set(false);
+      }
+    });
+  }
+
+  private activarPantallaCompleta() {
+    const elem = document.documentElement; // Selecciona toda la app Angular
+    
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if ((elem as any).webkitRequestFullscreen) { /* Safari / iOS */
+      (elem as any).webkitRequestFullscreen();
+    } else if ((elem as any).msRequestFullscreen) { /* IE / Edge */
+      (elem as any).msRequestFullscreen();
     }
-  });
-}
-
+  }
   /**
    * Cambia la vista entre Héroes y Malvado Brujo
    */
