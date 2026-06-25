@@ -30,9 +30,16 @@ export class Navbar {
   public volverALaTaberna() {
     // 1. Limpiamos la misión actual del estado global para que la app sepa que no estamos jugando
     // Ajusta este método según cómo limpies tu Signal en el servicio (ej: .set(null) o un método limpiar())
-    this.misionService.misionActual.set(null); 
+    this.misionService.misionActual.set(null);
+    this.uiService.setModoVisualizacion(null); 
     
     // 2. Teletransporte de vuelta al Dashboard
     this.router.navigate(['/la-taberna']);
+  }
+
+  public gestionDeMazos(){
+    this.turnoMBService.cambiarFaseTurnoMB('MAZOS');
+    this.uiService.setOrigenNav('GESTION_MAZOS');
+    this.uiService.cambiaVista('GESTION_MAZOS');
   }
 }

@@ -89,10 +89,11 @@ export class MisionService {
     this.deckService.generarMazoSalas(mision);
 
     // --- PASO 4: MAZMORRAS (OPCIONAL/RESTO) ---
-    this.deckService.generarMazoLosetas(mision);
+    let cartasMazmorraIds = this.deckService.generarMazoLosetas(mision);
+    this.inicializarRutasDesdeCero(cartasMazmorraIds);
 
     // --- PASO 5: MAZO DE ATREZO (CON LOGICA DE COFRES Y FILTROS) ---
-      this.deckService.generarMazoSalasEspeciales(mision);
+    this.deckService.generarMazoSalasEspeciales(mision);
 
     console.log('MAZO CONFIGURADO', this.deckService.cartasEnPartida());
   }
@@ -211,6 +212,7 @@ export class MisionService {
         nivelPeligroInicial: Number(fila.peligroInicial) || 0,
         dadoTrampa: fila.dadoTrampa,
         tablaEncuentros: fila.tablaEncuentros,
+        nivelMaximoEncuentro: Number(fila.nivelMaximoEncuentro) || 0,
         monstruoErrante: fila.errante,
         monstruoErranteSuperior: fila.erranteSuperior,
         reglasEspeciales: fila.reglasEspeciales,
@@ -224,6 +226,7 @@ export class MisionService {
           mazmorraPasillos: Number(fila.conf_mazmorra_pasillos) || 0,
           incluyeEscalera: String(fila.conf_incluye_escalera).toUpperCase() === 'TRUE',
           incluyeSalaObjetivo: String(fila.conf_incluye_sala_objetivo).toUpperCase() === 'TRUE',
+          salaObjetivoAlFinal: String(fila.conf_sala_objetivo_al_final).toUpperCase() === 'TRUE',
           incluyeJefe: String(fila.conf_incluye_jefe).toUpperCase() === 'TRUE',
           atrezoSinAtrezo: Number(fila.conf_sin_atrezo) || 0,
           atrezoAzar: Number(fila.conf_atrezo_azar) || 0,

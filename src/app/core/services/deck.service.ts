@@ -263,33 +263,45 @@ export class DeckService {
     // 3. MEZCLA INICIAL: Juntamos las seleccionadas y barajamos el grupo completo
     let mazoMezclado = this.barajar([...normalesSeleccionadas, ...especialesSeleccionadas]);
 
-    // 4. EL CLÍMAX: Extraemos 2 cartas al azar del mazo ya mezclado
-    const dosParaElFinal = mazoMezclado.splice(0, 2);
-    
-    // 5. SALA OBJETIVO: La buscamos y la juntamos con las dos anteriores
-    const salaObjetivoBase = todasSalas.find(c => c.tipo === 'Objetivo');
-    let bloqueFinal: EstadoMazoMision[] = [...dosParaElFinal];
-    
-    if (salaObjetivoBase) {
-      bloqueFinal.push(this.mapearACartaEstado(salaObjetivoBase));
+    if(mision.configuracion!.incluyeSalaObjetivo){
+      const salaObjetivoBase = todasSalas.filter(c => c.tipo === 'Objetivo');
+      let bloqueFinalBarajado: EstadoMazoMision[] = [];
+      if (mision.configuracion!.salaObjetivoAlFinal) {
+        bloqueFinalBarajado = this.crearEstadoMazo(salaObjetivoBase);
+      } else {
+        // 4. SALA OBJETIVO: Extraemos 2 cartas al azar del mazo ya mezclado
+        const dosParaElFinal = mazoMezclado.splice(0, 2);
+        // 5. SALA OBJETIVO: La buscamos y la juntamos con las dos anteriores
+        let bloqueFinal: EstadoMazoMision[] = [...dosParaElFinal];
+        
+        if (salaObjetivoBase) {
+          bloqueFinal.push(this.mapearACartaEstado(salaObjetivoBase[0]));
+        }
+        // Barajamos el bloque de 3 para que el Boss no sepa ni él dónde está
+        bloqueFinalBarajado = this.barajar(bloqueFinal);
+      }
+      // 6. ENSAMBLAJE: Resto del mazo + Bloque final de 3
+      const mazoFinal = [...mazoMezclado, ...bloqueFinalBarajado];
+      // Asignamos posiciones finales (0 arriba ... X abajo)
+      const mazoSalasListo =  mazoFinal.map((c, i) => ({ ...c, posicion: i }));
+      this._cartasEnPartida.update(cartasActuales => {
+        // Eliminamos las cartas antiguas de Atrezo si las hubiera
+        const otrasCartas = cartasActuales.filter(c => c.idMazo !== 'M-SAL');
+        
+        // Insertamos el nuevo mazo configurado para la misión
+        return [...otrasCartas, ...mazoSalasListo];
+      });
+    } else {
+      const mazoSalasListo =  mazoMezclado.map((c, i) => ({ ...c, posicion: i }));
+      this._cartasEnPartida.update(cartasActuales => {
+        // Eliminamos las cartas antiguas de Atrezo si las hubiera
+        const otrasCartas = cartasActuales.filter(c => c.idMazo !== 'M-SAL');
+        
+        // Insertamos el nuevo mazo configurado para la misión
+        return [...otrasCartas, ...mazoSalasListo];
+      });
     }
 
-    // Barajamos el bloque de 3 para que el Boss no sepa ni él dónde está
-    const bloqueFinalBarajado = this.barajar(bloqueFinal);
-
-    // 6. ENSAMBLAJE: Resto del mazo + Bloque final de 3
-    const mazoFinal = [...mazoMezclado, ...bloqueFinalBarajado];
-
-    // Asignamos posiciones finales (0 arriba ... X abajo)
-    const mazoSalasListo =  mazoFinal.map((c, i) => ({ ...c, posicion: i }));
-
-    this._cartasEnPartida.update(cartasActuales => {
-      // Eliminamos las cartas antiguas de Atrezo si las hubiera
-      const otrasCartas = cartasActuales.filter(c => c.idMazo !== 'M-SAL');
-      
-      // Insertamos el nuevo mazo configurado para la misión
-      return [...otrasCartas, ...mazoSalasListo];
-    });
   }
 
   public generarMazoLosetas(mision: Mision) {
@@ -321,6 +333,7 @@ export class DeckService {
     // --- PASO D: Añadir Salas Especiales ---
     const salasEspeciales = todasCartasMazmorra.filter(c => c.tipo === 'Especial');
     const salasEspecialesCantidad = mision.configuracion!.mazmorraSalasEspeciales || 0;
+    console.log("SALAS ESP Nº", salasEspecialesCantidad);
     const salasEspecialesSeleccionadas = this.barajar(this.crearEstadoMazo(salasEspeciales)).slice(0, salasEspecialesCantidad);
     bloqueCartasMision.push(...salasEspecialesSeleccionadas);
     
@@ -329,19 +342,23 @@ export class DeckService {
 
     if(mision.configuracion!.incluyeSalaObjetivo){
       // --- PASO F: El clímax del mazo (Sala Objetivo + 3 acompañantes al fondo) ---
-      const salasObjetivo = todasCartasMazmorra.filter(c => c.tipo === 'Objetivo');
+      const salaObjetivo = todasCartasMazmorra.filter(c => c.tipo === 'Objetivo');
       
-      if (mazoMezcladoCompleto.length >= 3) {
-        // Extraemos 2 del mazo ya mezclado
-        const dosCartasParaElFinal = mazoMezcladoCompleto.splice(0, 3);
-  
-        // Creamos el trío del fondo y lo barajamos
-        const comboFinalMezclado = this.barajar([...dosCartasParaElFinal, ...this.crearEstadoMazo(salasObjetivo)]);
-  
-        // Lo inyectamos al final del mazo
-        mazoMezcladoCompleto = [...mazoMezcladoCompleto, ...comboFinalMezclado];
+      if (mision.configuracion!.salaObjetivoAlFinal) {
+        mazoMezcladoCompleto = [...mazoMezcladoCompleto, ...this.crearEstadoMazo(salaObjetivo)];
       } else {
-        console.error("Error crítico: No se pudo preparar el fondo del mazo. Revisa que existan cartas de tipo 'Objetivo' o que el mazo base tenga losetas suficientes.");
+        if (mazoMezcladoCompleto.length >= 3) {
+          // Extraemos 2 del mazo ya mezclado
+          const dosCartasParaElFinal = mazoMezcladoCompleto.splice(0, 3);
+    
+          // Creamos el trío del fondo y lo barajamos
+          const comboFinalMezclado = this.barajar([...dosCartasParaElFinal, ...this.crearEstadoMazo(salaObjetivo)]);
+    
+          // Lo inyectamos al final del mazo
+          mazoMezcladoCompleto = [...mazoMezcladoCompleto, ...comboFinalMezclado];
+        } else {
+          console.error("Error crítico: No se pudo preparar el fondo del mazo. Revisa que existan cartas de tipo 'Objetivo' o que el mazo base tenga losetas suficientes.");
+        }
       }
     }
 
@@ -353,11 +370,17 @@ export class DeckService {
       idMazo: 'M-MAZ' // Forzamos que se mantenga el ID del mazo unificado
     }));
 
+    // 1. Extraemos los IDs únicos del mazo que acabamos de generar
+    const nuevosIdsMazo = mazoFinalListo.map(c => c.id);
+
+    // 2. Inyectamos las cartas en la partida
     this._cartasEnPartida.update(cartasActuales => {
       // Purgamos cartas antiguas de mazmorras si las hubiera
       const otrasCartas = cartasActuales.filter(c => c.idMazo !== 'M-MAZ');
       return [...otrasCartas, ...mazoFinalListo];
     });
+
+    return nuevosIdsMazo;
   }
 
   /**
@@ -378,6 +401,12 @@ export class DeckService {
 
   resetearCartaActiva() {
     this._cartaActiva.set(null);
+  }
+
+  // En tu DeckService:
+  resetearPartida() {
+    this._cartasEnPartida.set([]); // Vaciamos todas las cartas de todos los mazos
+    this._cartaActiva.set(null);   // Limpiamos la carta activa en mesa
   }
 
   /**
@@ -456,7 +485,9 @@ export class DeckService {
    * Métodos de apoyo para mantener el código limpio y eficiente
    */
   private actualizarFaseSegunMazo(idMazo: string, cantidad: number, tipo: string) {
-    if (idMazo === 'M-SAL' && cantidad > 0 || idMazo === 'M-ATR' || idMazo === 'M-ESP' 
+    if (idMazo === 'M-SAL' && cantidad > 0 
+      || idMazo === 'M-ATR' || idMazo === 'M-ESP' 
+      || idMazo === 'M-TRA' || idMazo === 'M-PAS'
       || (idMazo === 'M-MAZ' && tipo.toLowerCase() !== 'pasillo')){
       this.faseTurnoHeroes.set('SALA_ABIERTA');
     } else if (['M-TRP', 'M-EVE', 'M-EVI'].includes(idMazo)) {
@@ -543,21 +574,127 @@ export class DeckService {
     this._mazoAGestionar.set(this._cartasEnPartida().filter(c => c.idMazo === idMazo));
   }
 
+  cargarUltimaCartaDescarte(idMazo: string) {
+    // 1. Obtener estado actual de los signals (Snapshot)
+    const cartasEnPartida = this._cartasEnPartida();
+    const biblioteca = this.biblioteca();
+
+    // 2. Filtrar cartas que están en el descarte de ese mazo específico
+    const cartasDescarte = cartasEnPartida
+      .filter(c => c.idMazo === idMazo && c.pila === 'Descarte');
+
+    // 3. Si no hay ninguna carta descartada, limpiamos la carta activa
+    if (cartasDescarte.length === 0) {
+      this._cartaActiva.set(null);
+      return;
+    }
+
+    // 4. Ordenamos de mayor a menor posición (la más reciente/alta arriba)
+    cartasDescarte.sort((a, b) => b.posicion - a.posicion);
+    const ultimaDescartada = cartasDescarte[0];
+
+    // 5. BÚSQUEDA EFICIENTE: Cruzamos con la biblioteca de Drive para obtener textos e imágenes
+    const infoCarta = biblioteca.find(c => c.idCarta === ultimaDescartada.idCarta);
+
+    if (infoCarta) {
+      // Seteamos el Signal exactamente igual que haces al robar
+      this._cartaActiva.set(infoCarta);
+    } else {
+      this._cartaActiva.set(null);
+    }
+  }
+
   public barajarPilaRobo(pilaRobo: EstadoMazoMision[]): EstadoMazoMision[]{
     return this.shuffleArray([...pilaRobo]);
   }
 
-  public barajarMazo(idMazo: string){
-    const cartasMazo = this._cartasEnPartida().filter(c => c.idMazo === idMazo);
+  public barajarMazo(idMazo: string) {
+    // 1. Si el mazo es de Atrezo, Trampas o Eventos, se baraja de forma aleatoria estándar
+    if (idMazo !== 'M-SAL' && idMazo !== 'M-MAZ') {
+      const cartasMazo = this._cartasEnPartida().filter(c => c.idMazo === idMazo);
+      
+      for (let i = cartasMazo.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cartasMazo[i], cartasMazo[j]] = [cartasMazo[j], cartasMazo[i]];
+      }
+
+      this._cartasEnPartida.update(cartasEnPartida => {
+        return cartasEnPartida.map(est => {
+          const indiceEnNuevoOrden = cartasMazo.findIndex(n => n.id === est.id);
+          if (indiceEnNuevoOrden !== -1) {
+            return { ...est, pila: 'Robo' as TipoPila, posicion: indiceEnNuevoOrden + 1 };
+          }
+          return est;
+        });
+      });
+      return;
+    }
+
+    // 2. ⚔️ LÓGICA CORE PARA MAZOS CON CLÍMAX ('M-SAL' o 'M-MAZ')
     this._cartasEnPartida.update(cartasEnPartida => {
-      return cartasEnPartida
-              .map(est => {
-                const indiceEnNuevoOrden = cartasMazo.findIndex(n => n.id === est.id);
-                if (indiceEnNuevoOrden !== -1) {
-                  return { ...est, pila: 'Robo' as TipoPila, posicion: indiceEnNuevoOrden + 1 };
-                }
-                return est;
-              });
+      // 🌟 CORRECCIÓN AQUÍ: Capturamos tanto lo que quede en 'Robo' como lo que haya en 'Descarte'
+      // para que el botón "Barajar" y el "Reciclar" funcionen siempre.
+      const poolABarajar = cartasEnPartida.filter(
+        c => c.idMazo === idMazo && (c.pila === 'Robo' || c.pila === 'Descarte')
+      );
+      
+      // Las cartas que se quedan intactas en la partida (las ya jugadas en mesa/tablero)
+      const otrasCartas = cartasEnPartida.filter(
+        c => c.idMazo !== idMazo || (c.pila !== 'Robo' && c.pila !== 'Descarte')
+      );
+
+      // Buscamos la carta "Objetivo" en la biblioteca dentro de nuestro pool a barajar
+      const cartasObjetivo = poolABarajar.filter(c => {
+        const info = this.biblioteca().find(b => b.idCarta === c.idCarta);
+        return info?.tipo === 'Objetivo';
+      });
+
+      // Aislamos el resto de cartas (Salas comunes, Pasillos, Especiales...)
+      const cartasRestantes = poolABarajar.filter(c => {
+        const info = this.biblioteca().find(b => b.idCarta === c.idCarta);
+        return info?.tipo !== 'Objetivo';
+      });
+
+      // Barajamos el bloque de cartas comunes (Fisher-Yates)
+      for (let i = cartasRestantes.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cartasRestantes[i], cartasRestantes[j]] = [cartasRestantes[j], cartasRestantes[i]];
+      }
+
+      let mazoEspecialReconstruido = [];
+
+      // Si la sala objetivo está en este grupo (aún no ha salido al tablero)
+      if (cartasObjetivo.length > 0) {
+        // Extraemos las 2 últimas del montón común barajado para meter el Boss al fondo
+        // Usamos Math.min por seguridad si quedaran menos de 2 cartas en el mazo
+        const cantidadParaElFondo = Math.min(2, cartasRestantes.length);
+        const dosUltimas = cartasRestantes.splice(0, cantidadParaElFondo);
+        
+        // Creamos el combo final (Comunes + Objetivo) y lo mezclamos
+        const comboFinal = [...dosUltimas, ...cartasObjetivo];
+        for (let i = comboFinal.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [comboFinal[i], comboFinal[j]] = [comboFinal[j], comboFinal[i]];
+        }
+
+        // Ensamblamos: Comunes arriba, Bloque del Boss al fondo (al principio del array)
+        // Nota: Si en tus métodos de generación 'index + 1' significa que el final del array es el fondo del mazo,
+        // ponemos [...cartasRestantes, ...comboFinal]. Si el fondo es el índice 0, se invierte.
+        mazoEspecialReconstruido = [...cartasRestantes, ...comboFinal];
+      } else {
+        // Si el Boss ya está en el tablero, barajamos lo que quede de forma normal
+        mazoEspecialReconstruido = cartasRestantes;
+      }
+
+      // Mapeamos las posiciones restableciendo la pila a 'Robo'
+      const mazoListo = mazoEspecialReconstruido.map((c, index) => ({
+        ...c,
+        pila: 'Robo' as TipoPila,
+        posicion: index + 1 // Mantiene el estándar de tu Paso G de generación (1...N)
+      }));
+
+      // Retornamos el nuevo estado global consolidado
+      return [...otrasCartas, ...mazoListo];
     });
   }
   

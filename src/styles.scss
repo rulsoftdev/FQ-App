@@ -18,27 +18,23 @@ html {
   font-style: normal;
 }
 
-/*:root {
-  --app-max-width: 450px; // Ancho típico de un móvil grande
-  --app-bg-desktop: #1a1a1a; // Color de fondo para los laterales en PC
+// Breakpoint estándar para Tablets (768px o más)
+@media (min-width: 768px) {
+  
+  // Pon esto en el contenedor que envuelve TODA la pantalla de juego
+  .app-game-screen {
+    display: grid;
+    grid-template-columns: 400px 1fr; // Columna izquierda fija para datos/botones, derecha elástica para la carta
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header main"
+      "sidebar main";
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    height: 100vh;
+    align-items: start;
+  }
 }
-
-body {
-  //margin: 0;
-  padding: 16px;
-  background-color: var(--app-bg-desktop);
-  display: flex;
-  justify-content: center; // Centra la app en el navegador
-  min-height: 100vh;
-}
-
-// Este es el contenedor que limitará el ancho en PC/Tablets
-.app-viewport-container {
-  width: 100%;
-  max-width: var(--app-max-width);
-  height: 100vh;
-  // background-color: #f4ece2; // El color de fondo de tu pergamino/app
-  position: relative;
-  overflow-x: hidden;
-  box-shadow: 0 0 50px rgba(0,0,0,0.8); // Sombra para dar profundidad sobre el fondo negro
-}*/

@@ -1,0 +1,50 @@
+<div class="dashboard-campanyas">
+    <div class="campanyas-list">
+      @for (campanya of campanyas(); track campanya.nombre) {
+        <div class="campanya-item">
+          <!-- Cabecera de la campaña -->
+          <div class="campanya-header" (click)="toggleCampanya(campanya.nombre)">
+          <div class="titulo-grupo">
+              <h2>{{ campanya.nombre }}</h2>
+              <span class="badge">{{ campanya.misiones.length }} misiones</span>
+          </div>
+          
+          <i class="arrow" [class.open]="expanded() === campanya.nombre">▼</i>
+          </div>
+
+          <!-- Listado de misiones (Efecto Persiana) -->
+          @if (expanded() === campanya.nombre) {
+            <div class="misiones-drawer" [@slideInOut]>
+              @for (mision of campanya.misiones; track mision.id) {
+                  <div class="mision-row-container" [class.selected]="misionSeleccionadaId() === mision.id">
+                      <div class="mision-row-minimal" (click)="prepararSeleccion(mision.id)">
+                          <span class="mision-nombre">{{ mision.nombre }}</span>
+                          <div class="mision-stars">
+                          @for (s of [1,2,3,4,5]; track s) {
+                              <span class="star" [class.filled]="s <= mision.dificultad">★</span>
+                          }
+                          </div>
+                      </div>
+                      <!-- Selector de Modo (Efecto "Sello de Tinta") -->
+                      @if (misionSeleccionadaId() === mision.id) {
+                          <div class="modo-selector-overlay" [@slideInOut]>
+                              <p>¿Cómo deseas jugar?</p>
+                              <div class="selector-buttons">
+                                  <button class="btn-ink-small" (click)="confirmarMision(mision, 'TABLERO')">
+                                  TABLERO
+                                  </button>
+                                  <button class="btn-ink-small" (click)="confirmarMision(mision, 'LOSETAS')">
+                                  LOSETAS
+                                  </button>
+                                  <button class="btn-cancel" (click)="misionSeleccionadaId.set(null)">✕</button>
+                              </div>
+                          </div>
+                      }
+                  </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>

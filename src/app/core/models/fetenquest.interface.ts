@@ -5,9 +5,9 @@ export type TipoMazo = 'Salas' | 'Atrezos' | 'Salas especiales' | 'Pasillos' | '
 // Fases de la vista de los Heroes
 export type FaseTurnoHeroes = 'INICIO_HEROES' | 'SALA_ABIERTA' | 'ENCUENTRO';
 // Fases de la vista del MB
-export type FaseTurnoMB = 'INICIO_MB' | 'MENSAJE' | 'BESTIARIO';
+export type FaseTurnoMB = 'INICIO_MB' | 'MENSAJE' | 'BESTIARIO' | 'MAZOS';
 //Define la pantalla que está visible
-export type VistaJuego = 'VIEW_HEROES' | 'VIEW_MB' | 'VIEW_MAZO';
+export type VistaJuego = 'VIEW_HEROES' | 'VIEW_MB' | 'VIEW_MAZO' | 'GESTION_MAZOS';
 
 export interface Mazo {
   id: string;
@@ -53,6 +53,7 @@ export interface Mision {
   nivelPeligroInicial: number;
   dadoTrampa: string; 
   tablaEncuentros: string;
+  nivelMaximoEncuentro: number;
   monstruoErrante: string;
   monstruoErranteSuperior: string;
   reglasEspeciales?: string;
@@ -66,6 +67,7 @@ export interface Mision {
     mazmorraPasillos: number; 
     incluyeEscalera: boolean;
     incluyeSalaObjetivo: boolean;
+    salaObjetivoAlFinal: boolean;
     incluyeJefe: boolean;
     atrezoSinAtrezo: number;
     atrezoAzar: number;

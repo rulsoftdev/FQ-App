@@ -45,13 +45,22 @@ export class EncuentrosService {
   }
   
   public cargarEncuentrosMision(familia: string){
-    this._encuentrosMision.set(this.encuentros().filter(e => e.familia === familia));
+    if(this.misionActual()?.nivelMaximoEncuentro! > 0){
+      this._encuentrosMision.set(this.encuentros().filter(e => e.familia === familia && Number.parseInt(e.resultado) <= this.misionActual()?.nivelMaximoEncuentro!));
+    } else {
+      this._encuentrosMision.set(this.encuentros().filter(e => e.familia === familia));
+    }
+    console.log("ENCUENTROS", this._encuentrosMision());
   }
 
   public tirarEncuentros(nivelPeligro: number, resultadoDado: number | null) {
     let dado = resultadoDado? resultadoDado: (Math.floor(Math.random() * 20) + 1) + nivelPeligro;
+    if(this.misionActual()?.nivelMaximoEncuentro! !== 0 && dado > this.misionActual()?.nivelMaximoEncuentro!) {
+      dado = this.misionActual()?.nivelMaximoEncuentro!;
+    }
     this.resultadoTirada.set(dado);
-    const hardEncuentro = this.encuentrosMision()[this.encuentrosMision().length-1];
+   
+    let hardEncuentro = this.encuentrosMision()[this.encuentrosMision().length-1];
     if(dado <= 10){
       this.misionService.actualizarNivelPeligro(1);
     } else if (dado >= Number.parseInt(hardEncuentro.resultado)) {

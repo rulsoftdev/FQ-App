@@ -1,11 +1,13 @@
 .mazo-container {
-  padding: 15px;
   color: #b89b5e;
   font-family: 'FetenQuestBody', serif;
   display: flex;
   flex-direction: column;
-  height: 70vh;
   box-sizing: border-box;
+  
+  // 📱 REPARACIÓN PARA MÓVIL: Flujo natural para que NUNCA se corten los botones inferiores
+  width: 100%;
+  height: auto; 
 
   .mazo-header {
     display: flex;
@@ -30,14 +32,15 @@
   }
 
   .descarte-viewer {
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 10px;
     
     h3 {
-      margin-bottom: 15px;
+      margin-top: 5px;
+      margin-bottom: 10px;
       font-size: 1rem;
       letter-spacing: 2px;
     }
@@ -56,7 +59,9 @@
       align-items: center;
 
       .card-mini {
-        width: 240px; // Tamaño controlado para móvil
+        // 👇 REDUCIENDO UN PELÍN EN MÓVIL: Al bajar a 210px de ancho nos aseguramos de que
+        // la botonera suba y se vea entera en cualquier pantalla de teléfono
+        width: 210px; 
         aspect-ratio: 2/3;
         border: 3px solid #b89b5e;
         border-radius: 12px;
@@ -70,12 +75,12 @@
           img {
             width: 100%;
             height: 100%;
-            object-fit: contain; // Importante para no recortar la ilustración
+            object-fit: contain;
           }
         }
       }
       .card-counter { 
-        margin-top: 12px; 
+        margin-top: 8px; 
         font-size: 0.9rem; 
         color: #add8e6;
         background: rgba(0,0,0,0.4);
@@ -98,9 +103,10 @@
 
   .mazo-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr; // Tres columnas ahora
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
-    margin-top: 20px;
+    margin-top: 15px;
+    padding-bottom: 15px; // Colchón inferior para que respire en el móvil
 
     .btn-stone {
       background: url('/textures/dark_stone_texture.png'), #222;
@@ -121,6 +127,57 @@
       &.btn-exit {
         color: #ff9999;
         border-color: #722;
+      }
+    }
+  }
+
+  // ====================================================
+  // 🖥️ EXCLUSIVO PANTALLAS GRANDES (Mantiene el estirado)
+  // ====================================================
+  @media (min-width: 768px) {
+    height: 100% !important; // En PC sí absorbe todo el viewport libre
+    padding: 10px 0;
+
+    .descarte-viewer {
+      flex: 1;
+      min-height: 0;
+
+      h3 {
+        margin-top: 0 !important;
+        margin-bottom: 20px !important;
+        font-size: 1.1rem !important;
+      }
+
+      .card-display {
+        .card-mini {
+          height: 48vh !important; // Mantiene el tamaño grande en PC
+          width: auto !important;
+          aspect-ratio: 2 / 3 !important;
+          border-width: 4px !important;
+        }
+
+        .card-counter {
+          margin-top: 15px !important;
+          font-size: 1rem !important;
+        }
+      }
+
+      .nav-arrow {
+        font-size: 3.5rem !important;
+        padding: 20px !important;
+      }
+    }
+
+    .mazo-actions {
+      margin-top: auto !important; // Empuja la botonera abajo solo en PC
+      gap: 15px !important;
+      padding-bottom: 0 !important;
+
+      .btn-stone {
+        padding: 12px 10px !important;
+        font-size: 0.85rem !important;
+        
+        i { font-size: 1.3rem !important; }
       }
     }
   }

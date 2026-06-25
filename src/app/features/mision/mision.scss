@@ -13,19 +13,53 @@
   flex: 1;
   display: flex;
   justify-content: center;
+  align-items: center; /* Centra la carta verticalmente en su zona */
+  min-height: 0;       /* Permite que el contenedor colapse si el monitor es bajo */
+  height: 100%;
 
   .card-container {
     width: 100%;
-    //max-width: 320px;
     filter: drop-shadow(0 0 20px rgba(184, 155, 94, 0.4)); // Brillo áureo sutil
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     
     .card-frame {
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
       
       // La imagen de la carta
       img {
         width: 100%;
         display: block;
+        object-fit: contain; /* Evita que la imagen se deforme al escalar */
+      }
+    }
+
+    // ====================================================
+    // 🖥️ ¡AQUÍ ESTÁ LA MAGIA PARA PANTALLA GRANDE / TABLET!
+    // ====================================================
+    @media (min-width: 768px) {
+      // Forzamos a que la carta mida estrictamente el 65% del alto de la pantalla del PC
+      max-height: 75vh !important; 
+      height: 75vh !important;
+      
+      // Forzamos la proporción perfecta del juego de mesa (Relación 2 de ancho por 3 de alto)
+      aspect-ratio: 2 / 3 !important; 
+      
+      width: auto !important; /* Deja que el ancho se auto-calcule basándose en el alto de 65vh */
+      margin: auto;
+
+      .card-frame {
+        height: 100% !important;
+        
+        img {
+          height: 100% !important;
+          width: auto !important; /* La imagen se acopla al alto máximo sin desbordar */
+        }
       }
     }
   }
@@ -147,15 +181,24 @@
       border-radius: 5px;
       margin-bottom: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+
+      @media (min-width: 768px) {
+        width: 90% !important;
+      }
     }
 
     .mision-lore {
-      font-size: 1.1rem;
+      font-size: 0.9rem;
       line-height: 1.5;
       text-align: justify;
       font-style: italic;
       margin: 0;
       padding-bottom: 10px;
+
+      @media (min-width: 768px) {
+        padding-left: 30px !important;
+        padding-right: 30px !important;
+      }
     }
   }
 

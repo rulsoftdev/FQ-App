@@ -2,14 +2,13 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DeckService, } from '../../core/services/deck.service';
 import { EncuentrosService } from '../../core/services/encuentros.service';
-import { Acciones } from "../../components/acciones/acciones";
 import { UiService } from '../../core/services/ui.service';
 import { MisionService } from '../../core/services/mision.service';
 
 @Component({
   selector: 'app-mision',
   standalone: true,
-  imports: [CommonModule, Acciones],
+  imports: [CommonModule],
   templateUrl: './mision.html',
   styleUrl: './mision.scss'
 })
@@ -40,6 +39,7 @@ export class Mision implements OnInit{
 
   ngOnInit(): void {
     this.encuentrosService.cargarEncuentrosMision(this.mision()?.tablaEncuentros!);
+    console.log(this.uiService.modoJuego());
     console.log("Entramos en la misión");
     console.log("CARTA ACTIVA", this.deckService.cartaActiva());
   }

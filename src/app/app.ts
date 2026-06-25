@@ -1,4 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { Router, NavigationEnd } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, filter } from 'rxjs/operators';
 import { SwUpdate } from '@angular/service-worker';
 import { Header } from "./components/header/header";
 import { Navbar } from "./components/navbar/navbar";
@@ -10,10 +14,11 @@ import { MisionService } from './core/services/mision.service';
 import { forkJoin } from 'rxjs';
 import { EncuentrosService } from './core/services/encuentros.service';
 import { RouterOutlet } from '@angular/router';
+import { Acciones } from './components/acciones/acciones';
 
 @Component({
   selector: 'app-root',
-  imports: [Header, Navbar, RouterOutlet],
+  imports: [Header, Navbar, Acciones, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -30,6 +35,33 @@ export class App  implements OnInit {
   // Estados de la aplicación
   public misionActual = this.misionService.misionActual;
   public cargando = signal<boolean>(true);
+
+  private breakpointObserver = inject(BreakpointObserver);
+  private router = inject(Router);
+
+// 1. Detecta si físicamente la pantalla es grande
+  private esPantallaGrandeFisica = toSignal(
+    this.breakpointObserver.observe([
+      '(min-width: 768px) and (orientation: landscape)', 
+      '(min-width: 1024px)'
+    ]).pipe(map(result => result.matches)),
+    { initialValue: false }
+  );
+
+  // 2. Detecta en tiempo real si el usuario está en la ruta restringida
+  public esRutaForjaAventura = toSignal(
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      map(() => this.router.url.includes('/forjar-aventura'))
+    ),
+    { initialValue: false }
+  );
+
+  // 3. SIGNAL DEFINITIVO: Une ambas condiciones
+  // Solo permite el modo PC si la pantalla acompaña Y NO estamos en la forja
+  mostrarLayoutDesktop = computed(() => {
+    return this.esPantallaGrandeFisica() && !this.esRutaForjaAventura();
+  });
 
   constructor(swUpdate: SwUpdate) {
     if (swUpdate.isEnabled) {
@@ -49,6 +81,7 @@ export class App  implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.breakpointObserver);
     this.cargando.set(true);
 
     // Agrupamos todas las cargas iniciales

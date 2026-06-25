@@ -1,5 +1,5 @@
-.inicio-mb{
-  img{
+.inicio-mb {
+  img {
     width: 100%;
   }
 }
@@ -20,8 +20,8 @@
     height: 100px; // Reducimos un poco la altura visual
     background: url('/textures/fondo_carta_FQ_cabecera.png') no-repeat center bottom;
     background-size: 100% 100%;
-    //margin-bottom: -40px; // <<< TRUCO: Sube el contenido hacia adentro de la cabecera
     z-index: 2;
+    
     // Reducimos el espacio superior del selector
     select {
       font-family: 'FetenQuestBody';
@@ -50,6 +50,39 @@
     background-size: 100% 100%;
     margin-top: -10px; // <<< TRUCO: Sube el cierre de la carta para pegarlo al contenido
   }
+
+  // ====================================================
+  // 🖥️ PARCHE DE ESCRITORIO / TABLET PARA EL BESTIARIO
+  // ====================================================
+  @media (min-width: 768px) {
+    max-width: 540px !important; // 🌟 Evita que el pergamino completo se estire a lo ancho de la pantalla
+    margin: auto !important;     // Centra el libro en su columna correspondiente
+    min-height: 0;
+
+    .familia-container {
+      height: 90px;
+      padding: 0 50px; // Añade un colchón seguro a los lados
+      box-sizing: border-box;
+
+      select {
+        width: 100% !important;   // En PC usamos el 100% del espacio seguro que delimita el padding
+        margin-left: 0 !important; // Matamos el margen izquierdo fijo que lo descentraba a la derecha
+        margin-top: 55px;          // Encaja perfectamente el combo dentro del dibujo de la cabecera
+        font-size: clamp(0.9rem, 1.8vh, 1.05rem);
+      }
+    }
+
+    .bestiario-container {
+      padding: 0 50px !important; // Aislamos el texto y las tablas de los bordes laterales del papiro
+      overflow-y: auto;          // Si la lista de monstruos es enorme, el scroll se queda confinado dentro de la carta
+      min-height: 0;
+      flex: 1;
+
+      // Estilo de barra de scroll muy discreta estilo medieval
+      &::-webkit-scrollbar { width: 4px; }
+      &::-webkit-scrollbar-thumb { background: rgba(62, 39, 35, 0.3); border-radius: 2px; }
+    }
+  }
 }
 
 .mensaje-container {
@@ -77,6 +110,13 @@
     // Padding interno para no pisar los bordes de piedra/cadenas
     padding: 60px 50px; 
     box-sizing: border-box;
+
+    // ====================================================
+    // 🖥️ AJUSTE PARA PANTALLA GRANDE / TABLET
+    // ====================================================
+    @media (min-width: 768px) {
+      min-height: 600px !important; // Aumentamos la altura mínima en PC/Tablet
+    }
   }
 }
 
@@ -119,6 +159,10 @@
   font-family: 'FetenQuestBody';
   font-size: 0.9rem;
   margin-top: 15px;
+
+  @media (min-width: 768px) {
+    font-size: clamp(0.8rem, 1.6vh, 0.95rem); // Hace la letra de los monstruos sutilmente elástica en PC
+  }
 }
 
 .tabla-monstruos th {
@@ -138,4 +182,8 @@
   color: #2c1f1b;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(0,0,0,0.3);
+  
+  @media (min-width: 768px) {
+    font-size: clamp(0.7rem, 1.4vh, 0.85rem); // Ajusta la letra de las habilidades si la pantalla reduce altura
+  }
 }

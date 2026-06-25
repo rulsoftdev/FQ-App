@@ -3,16 +3,16 @@
   max-width: 380px;
   min-height: 280px; // Ajusta según la proporción de tu imagen
   margin: 15px auto;
-  
+
   // Aplicamos tu nueva textura única
   background-image: url('/textures/fondo_card.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  
+
   display: flex;
   flex-direction: column;
   position: relative;
-  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.4));
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4));
   transition: transform 0.2s ease;
 
   &:hover {
@@ -52,66 +52,73 @@
       }
 
       .dificultad-estrellas {
-        span{
-            font-size: 0.85rem;
-            font-family: 'FetenQuestBody';
-            font-style: italic;
+        span {
+          font-size: 0.85rem;
+          font-family: 'FetenQuestBody';
+          font-style: italic;
         }
+
         .star {
           color: #ccc;
           font-size: 0.9rem;
-          &.filled { color: #d4af37; }
+
+          &.filled {
+            color: #d4af37;
+          }
         }
       }
     }
 
     .mision-actions {
-        margin-top: auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        padding: 10px 0;
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      padding: 10px 0;
 
-        .btn-ink {
-            // Fondo casi negro mate, como tinta seca
-            background: #1a1a1a;
-            
-            // Borde irregular (estilo sketch)
-            border: 2px solid #000;
-            border-radius: 2px;
-            
-            // Texto en blanco roto o gris muy claro para el efecto BN
-            color: #f0f0f0; 
-            
-            font-family: 'FetenQuestTitles', serif;
-            font-size: 0.8rem;
-            padding: 10px 5px;
-            cursor: pointer;
-            
-            // Eliminamos sombras exteriores pesadas para que no "flote"
-            box-shadow: none;
-            
-            // Un toque de rugosidad
-            position: relative;
-            text-transform: uppercase;
-            transition: all 0.1s ease;
+      .btn-ink {
+        // Fondo casi negro mate, como tinta seca
+        background: #1a1a1a;
 
-            &:hover {
-            background: #333;
-            color: #fff;
-            // Simula que presionas el papel
-            transform: scale(0.98);
-            }
+        // Borde irregular (estilo sketch)
+        border: 2px solid #000;
+        border-radius: 2px;
 
-            // Efecto decorativo: pequeñas muescas en las esquinas (opcional)
-            &::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border: 1px solid rgba(255,255,255,0.1);
-            pointer-events: none;
-            }
+        // Texto en blanco roto o gris muy claro para el efecto BN
+        color: #f0f0f0;
+
+        font-family: 'FetenQuestTitles', serif;
+        font-size: 0.8rem;
+        padding: 10px 5px;
+        cursor: pointer;
+
+        // Eliminamos sombras exteriores pesadas para que no "flote"
+        box-shadow: none;
+
+        // Un toque de rugosidad
+        position: relative;
+        text-transform: uppercase;
+        transition: all 0.1s ease;
+
+        &:hover {
+          background: #333;
+          color: #fff;
+          // Simula que presionas el papel
+          transform: scale(0.98);
         }
+
+        // Efecto decorativo: pequeñas muescas en las esquinas (opcional)
+        &::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          pointer-events: none;
         }
+      }
+    }
   }
 }

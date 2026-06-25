@@ -38,6 +38,12 @@
   }
 }
 
+@media (min-width: 768px) {
+  .gestion-mazos {
+    gap: 20px !important;
+  }
+}
+
 .split-btn-group {
   display: flex;
   position: relative;

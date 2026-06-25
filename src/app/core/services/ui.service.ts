@@ -13,13 +13,19 @@ export class UiService {
   public readonly vistaActual = this._vistaActual.asReadonly();
   private _modoJuego = signal<ModoJuego>(null);
   public readonly modoJuego = this._modoJuego.asReadonly();
+  private _origenNav = signal<VistaJuego>('VIEW_HEROES');
+  public readonly origenNav = this._origenNav.asReadonly();
   
   public cambiaVista(vista: VistaJuego){
     this._vistaActual.set(vista);
   }
 
-  setModoVisualizacion(modo: ModoJuego) {
+  public setModoVisualizacion(modo: ModoJuego) {
     this._modoJuego.set(modo);
+  }
+
+  public setOrigenNav(vista: VistaJuego) {
+    this._origenNav.set(vista);
   }
 
 }

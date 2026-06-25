@@ -12,7 +12,7 @@ export const routes: Routes = [
   { 
     path: 'forjar-aventura', 
     component: CreadorMision,
-    title: 'Feten Quest - Forjar Misión'
+    title: 'Feten Quest - Forjar Aventura'
   },
   { 
     path: 'la-mazmorra', 

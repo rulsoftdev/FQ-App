@@ -5,6 +5,7 @@ import { TurnoMBService } from '../../core/services/turno-mb.service';
 import { Carta, FaseTurnoHeroes, VistaJuego } from '../../core/models/fetenquest.interface';
 import { UiService } from '../../core/services/ui.service';
 import { MisionService } from '../../core/services/mision.service';
+import { Campanyas } from "../campanyas/campanyas";
 
 interface RutaExploracion {
   id: number;
@@ -14,17 +15,17 @@ interface RutaExploracion {
 
 @Component({
   selector: 'app-acciones',
-  imports: [],
+  imports: [Campanyas],
   templateUrl: './acciones.html',
   styleUrl: './acciones.scss',
 })
 export class Acciones {
-
-  public misionService =  inject(MisionService);
-  public deckService =  inject(DeckService);
-  public encuentrosService =  inject(EncuentrosService);
-  public turnoMBService = inject(TurnoMBService);
-  public uiService = inject(UiService);
+  
+  private misionService =  inject(MisionService);
+  private deckService =  inject(DeckService);
+  private encuentrosService =  inject(EncuentrosService);
+  private turnoMBService = inject(TurnoMBService);
+  private uiService = inject(UiService);
 
   public cartaActiva = this.deckService.cartaActiva;
   public faseTurnoHeroe = this.deckService.faseTurnoHeroes;
@@ -33,7 +34,11 @@ export class Acciones {
   public misionActual = this.misionService.misionActual;
 
   // Detectamos el modo de juego desde tu UI Service
-  modoJuego = this.uiService.modoJuego; // 'TABLERO' o 'LOSETAS' (asumo que 'TABLERO' equivale a tus "mazmorras fijas actuales")
+  public modoJuego = this.uiService.modoJuego; // 'TABLERO' o 'LOSETAS' (asumo que 'TABLERO' equivale a tus "mazmorras fijas actuales")
+
+  mostrarCampanyas = computed(() => {
+    return this.modoJuego() !== 'TABLERO' && this.modoJuego() !== 'LOSETAS';
+  });
 
   // Estado de las rutas dinámicas para el modo LOSETA
   public rutas = computed(() => this.partida()?.rutasLosetas || []);
@@ -45,12 +50,15 @@ export class Acciones {
 
   constructor() {
     // Inicialización al cargar el modo LOSETAS
-    if (this.modoJuego() === 'LOSETAS' && this.rutas().length === 0) {
-      this.inicializarRutaInicial();
-    }
+    /*if (this.modoJuego() === 'LOSETAS' && this.rutas().length === 0) {
+      setTimeout(() => {
+        // Ejecutamos solo una vez para la Ruta 1 inicial
+        this.inicializarRutaInicial();
+      }, 0);
+    }*/
   }
 
-  private inicializarRutaInicial() {
+  /*private inicializarRutaInicial() {
     // Obtenemos todas las instancias del mazo M-MAZ que están listas para robar
     const todasCartasMazmorra = this.deckService.cartasEnPartida()
       .filter(c => c.idMazo === 'M-MAZ' && c.pila === 'Robo')
@@ -58,7 +66,7 @@ export class Acciones {
       .map(c => c.id); // Guardamos solo sus IDs únicos de instancia
 
     this.misionService.inicializarRutasDesdeCero(todasCartasMazmorra);
-  }
+  }*/
 
   /**
    * Contadores computados: 
@@ -90,6 +98,10 @@ export class Acciones {
   abrirGestionMazo(idMazo: string) {
     this.deckService.cargarMazoAGestionar(idMazo);
     this.uiService.cambiaVista('VIEW_MAZO');
+  }
+
+  cargarCartaActual(idMazo: string) {
+    this.deckService.cargarUltimaCartaDescarte(idMazo);
   }
 
   explorarRuta(rutaId: number) {
@@ -252,6 +264,13 @@ export class Acciones {
       this.turnoMBService.cambiarFaseTurnoMB('MENSAJE');
       this.turnoMBService.actualizarMensaje(dado, evento.texto, "EVENTO");
     }
+  }
+
+  salir() {
+    if(!this.deckService.cartaActiva()) {
+      this.deckService.cambiarFaseTurno('INICIO_HEROES');
+    }
+    this.uiService.cambiaVista('VIEW_HEROES');
   }
 
 }

@@ -69,6 +69,7 @@ export class CreadorMision {
       peligroInicial: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
       dadoTrampa: ['1D12', [Validators.required]],
       tablaEncuentros: ['', [Validators.required]],
+      nivelMaximoEncuentros: [0],
       errante: ['', [Validators.required]],
       erranteSuperior: ['', [Validators.required]]
     }),
@@ -84,6 +85,7 @@ export class CreadorMision {
 
       incluyeEscalera: [false],
       incluyeSalaObjetivo: [true],
+      salaObjetivoAlFinal: [false],
       incluyeJefe: [false],
 
     }),
@@ -250,6 +252,7 @@ export class CreadorMision {
         nivelPeligroInicial: rawValues.paso1!.peligroInicial!,
         dadoTrampa: rawValues.paso1!.dadoTrampa as '1D4' | '1D6' | '1D8' | '1D10' | '1D12',
         tablaEncuentros: rawValues.paso1!.tablaEncuentros!,
+        nivelMaximoEncuentro: rawValues.paso1!.nivelMaximoEncuentros!,
         monstruoErrante: rawValues.paso1!.errante!,
         monstruoErranteSuperior: rawValues.paso1!.erranteSuperior!,
         configuracion: {
@@ -260,6 +263,7 @@ export class CreadorMision {
           mazmorraPasillos: rawValues.paso2!.mazmorraPasillos!,
           incluyeEscalera: rawValues.paso2!.incluyeEscalera!,
           incluyeSalaObjetivo: rawValues.paso2!.incluyeSalaObjetivo!,
+          salaObjetivoAlFinal: rawValues.paso2!.salaObjetivoAlFinal!,
           incluyeJefe: rawValues.paso2!.incluyeJefe!,
           atrezoSinAtrezo: rawValues.paso3!.sinAtrezo!,
           atrezoAzar: rawValues.paso3!.atrezoAzar!,

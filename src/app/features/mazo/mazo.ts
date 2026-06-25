@@ -64,9 +64,13 @@ export class Mazo {
   }
 
   salir() {
-    if(!this.deckService.cartaActiva()) {
-      this.deckService.cambiarFaseTurno('INICIO_HEROES');
+    if(this.uiService.origenNav() === "GESTION_MAZOS") {
+      this.uiService.cambiaVista('GESTION_MAZOS');
+    } else {
+      if(!this.deckService.cartaActiva()) {
+        this.deckService.cambiarFaseTurno('INICIO_HEROES');
+      }
+      this.uiService.cambiaVista('VIEW_HEROES');
     }
-    this.uiService.cambiaVista('VIEW_HEROES');
   }
 }
